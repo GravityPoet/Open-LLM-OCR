@@ -53,7 +53,7 @@
           "defaultPluginName": "Open-LLM-OCR · 百度 OCR"
         }
       ],
-      "desc": "只调用当前选中的一个服务；服务名称会显示当前供应商。"
+      "desc": "只调用当前选中的一个服务；未自定义服务名称时显示当前供应商提示名，手动改名会保留。"
     },
     {
       "identifier": "openDocRouterBaseUrl",

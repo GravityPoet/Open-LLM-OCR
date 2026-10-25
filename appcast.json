@@ -3,11 +3,11 @@
   "versions": [
     {
       "version": "0.4.2",
-      "desc": "0.4.2：服务名称随当前识别供应商动态显示；明确只调用选中的一项，保留 OpenDocRouter/Roboflow 优先布局与供应商分组。",
-      "sha256": "1b921937886f21b6c04f110fb67cff4e2238f6a385fc5addb59c7851be006321",
+      "desc": "0.4.2：当前 OCR 服务名称随选择显示供应商提示名；用户手动自定义的服务名称保留；明确只调用当前选中的服务。",
+      "sha256": "ea031c794f5b21632baad6343ea41a8e31d9c7c4efd4a12c2e7b40e01f3896c4",
       "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.2/Open-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
-      "timestamp": 1792949906396
+      "timestamp": 1792950187517
     },
     {
       "version": "0.3.0",
