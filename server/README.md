@@ -29,7 +29,7 @@ python -m pip install "paddleocr==3.4.0" "paddlex==3.4.1"
 然后：
 
 ```bash
-curl -sS http://127.0.0.1:8080/healthz
+curl -sS http://127.0.0.1:50000/healthz
 ```
 
 ## 生产建议（VPS）

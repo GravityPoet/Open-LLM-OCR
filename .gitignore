@@ -8,3 +8,6 @@ __pycache__/
 
 # OS junk
 .DS_Store
+
+# Local evidence (may reference private configuration)
+work/

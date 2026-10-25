@@ -1,0 +1,15 @@
+services:
+  ocr:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    ports:
+      - "127.0.0.1:50000:50000"
+    volumes:
+      - ./models:/app/server/models:ro
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "50000"
+      DEVICE: cpu
+      PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"

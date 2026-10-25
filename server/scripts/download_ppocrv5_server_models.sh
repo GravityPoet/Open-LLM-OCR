@@ -17,11 +17,15 @@ DET_URL="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_m
 REC_URL="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv5_server_rec_infer.tar"
 
 if [[ ! -f "${DET_TAR}" ]]; then
-  curl -L --retry 3 --retry-delay 2 -o "${DET_TAR}" "${DET_URL}"
+  curl --fail --location --connect-timeout 15 --max-time 600 --retry 2 --retry-delay 2 -o "${DET_TAR}.part" "${DET_URL}"
+  tar -tf "${DET_TAR}.part" >/dev/null
+  mv "${DET_TAR}.part" "${DET_TAR}"
 fi
 
 if [[ ! -f "${REC_TAR}" ]]; then
-  curl -L --retry 3 --retry-delay 2 -o "${REC_TAR}" "${REC_URL}"
+  curl --fail --location --connect-timeout 15 --max-time 600 --retry 2 --retry-delay 2 -o "${REC_TAR}.part" "${REC_URL}"
+  tar -tf "${REC_TAR}.part" >/dev/null
+  mv "${REC_TAR}.part" "${REC_TAR}"
 fi
 
 if [[ ! -d "${DET_DIR}" ]]; then

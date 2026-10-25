@@ -1,0 +1,7 @@
+.git
+work
+server/.venv
+server/models
+server/*.tar*
+**/__pycache__
+*.bobplugin

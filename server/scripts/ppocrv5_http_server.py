@@ -13,21 +13,14 @@ import binascii
 import json
 import logging
 import os
-import tempfile
+import io
+import math
 import threading
 import uuid
 from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
-
-try:
-    from paddleocr import PaddleOCR
-except Exception as exc:  # pragma: no cover - runtime import guard
-    raise SystemExit(
-        "导入 paddleocr 失败。请先安装 PaddleOCR（示例：python3 -m pip install 'paddleocr>=3.0.0,<4.0.0'）。"
-    ) from exc
-
 
 MAX_REQUEST_BODY_BYTES = 50 * 1024 * 1024
 MAX_BASE64_CHARS = 64 * 1024 * 1024
@@ -43,12 +36,14 @@ class OCRRequest:
 
 
 class OCRService:
-    def __init__(self, det_model_dir: str, rec_model_dir: str, device: str) -> None:
+    def __init__(self, det_model_dir: str, rec_model_dir: str, device: str, det_model_name: str = "PP-OCRv5_server_det", rec_model_name: str = "PP-OCRv5_server_rec") -> None:
+        from paddleocr import PaddleOCR
+
         self._lock = threading.Lock()
         self._pipeline = PaddleOCR(
-            text_detection_model_name="PP-OCRv5_server_det",
+            text_detection_model_name=det_model_name,
             text_detection_model_dir=det_model_dir,
-            text_recognition_model_name="PP-OCRv5_server_rec",
+            text_recognition_model_name=rec_model_name,
             text_recognition_model_dir=rec_model_dir,
             use_doc_orientation_classify=False,
             use_doc_unwarping=False,
@@ -57,52 +52,44 @@ class OCRService:
         )
 
     def infer(self, req: OCRRequest) -> dict[str, Any]:
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
-            temp_file.write(req.image_bytes)
-            temp_path = temp_file.name
+        # Decode once in memory. Paddle accepts BGR numpy arrays.
+        import cv2
+        import numpy as np
+        from PIL import Image
 
+        with Image.open(io.BytesIO(req.image_bytes)) as image_info:
+            width, height = image_info.size
+            if width * height > 40_000_000:
+                raise ValueError("图片超过 4000 万像素，请缩小后重试。")
+        image = cv2.imdecode(np.frombuffer(req.image_bytes, dtype=np.uint8), cv2.IMREAD_COLOR)
+        if image is None:
+            raise ValueError("图片无法解码。")
+        kwargs: dict[str, Any] = {}
+        for key, value in (
+            ("use_doc_orientation_classify", req.use_doc_orientation_classify),
+            ("use_doc_unwarping", req.use_doc_unwarping),
+            ("use_textline_orientation", req.use_textline_orientation),
+            ("text_rec_score_thresh", req.text_rec_score_thresh),
+        ):
+            if value is not None:
+                kwargs[key] = value
+        if not self._lock.acquire(timeout=0.2):
+            raise BlockingIOError("OCR 服务正在识别另一张图片，请稍后重试。")
         try:
-            kwargs: dict[str, Any] = {}
-            if req.use_doc_orientation_classify is not None:
-                kwargs["use_doc_orientation_classify"] = req.use_doc_orientation_classify
-            if req.use_doc_unwarping is not None:
-                kwargs["use_doc_unwarping"] = req.use_doc_unwarping
-            if req.use_textline_orientation is not None:
-                kwargs["use_textline_orientation"] = req.use_textline_orientation
-            if req.text_rec_score_thresh is not None:
-                kwargs["text_rec_score_thresh"] = req.text_rec_score_thresh
-
-            with self._lock:
-                output = self._pipeline.predict(temp_path, **kwargs)
-                ocr_results: list[dict[str, Any]] = []
-                for res in output:
-                    page_json = getattr(res, "json", None)
-                    if callable(page_json):
-                        page_json = page_json()
-
-                    if not isinstance(page_json, dict):
-                        continue
-
-                    pruned_result = page_json.get("res", page_json)
-                    ocr_results.append(
-                        {
-                            "prunedResult": to_json_compatible(pruned_result),
-                            "ocrImage": None,
-                            "docPreprocessingImage": None,
-                            "inputImage": None,
-                        }
-                    )
-
-            return {
-                "ocrResults": ocr_results,
-                "dataInfo": {
-                    "inputType": "image",
-                    "pages": len(ocr_results),
-                },
-            }
+            ocr_results: list[dict[str, Any]] = []
+            for res in self._pipeline.predict(image, **kwargs):
+                page_json = getattr(res, "json", None)
+                if callable(page_json):
+                    page_json = page_json()
+                if not isinstance(page_json, dict):
+                    raise ValueError("模型返回结构无效。")
+                pruned = page_json.get("res", page_json)
+                # Image arrays inflate replies and can retain private screenshots.
+                fields = {k: pruned[k] for k in ("rec_texts", "rec_scores", "rec_polys", "dt_polys") if k in pruned}
+                ocr_results.append({"prunedResult": to_json_compatible(fields)})
+            return {"ocrResults": ocr_results, "dataInfo": {"inputType": "image", "pages": len(ocr_results)}}
         finally:
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
+            self._lock.release()
 
 
 def to_json_compatible(value: Any) -> Any:
@@ -136,6 +123,9 @@ def parse_ocr_request(payload: Any) -> OCRRequest:
         image_bytes = base64.b64decode(file_value, validate=True)
     except binascii.Error as exc:
         raise ValueError("file 不是合法的 Base64 字符串。") from exc
+
+    if len(image_bytes) > 30 * 1024 * 1024:
+        raise ValueError("图片超过 30 MB。")
 
     if not image_bytes:
         raise ValueError("file 解码后为空。")
@@ -182,11 +172,11 @@ def parse_optional_float_range(value: Any, field: str, min_value: float, max_val
     if value is None:
         return None
 
-    if not isinstance(value, (int, float)):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ValueError(f"{field} 必须是数值。")
 
     float_value = float(value)
-    if float_value < min_value or float_value > max_value:
+    if not math.isfinite(float_value) or float_value < min_value or float_value > max_value:
         raise ValueError(f"{field} 必须在 [{min_value}, {max_value}] 范围内。")
 
     return float_value
@@ -203,6 +193,10 @@ class OCRRequestHandler(BaseHTTPRequestHandler):
     ocr_service: OCRService
     logger = logging.getLogger("ppocrv5_http_server")
 
+    def setup(self) -> None:
+        super().setup()
+        self.connection.settimeout(15)
+
     def do_POST(self) -> None:  # noqa: N802
         if self.path != "/ocr":
             self._write_error(HTTPStatus.NOT_FOUND, "接口不存在，仅支持 POST /ocr。")
@@ -215,6 +209,8 @@ class OCRRequestHandler(BaseHTTPRequestHandler):
                 return
 
             raw_body = self.rfile.read(content_length)
+            if len(raw_body) != content_length:
+                raise ValueError("请求体未完整接收。")
             payload = json.loads(raw_body.decode("utf-8"))
             req = parse_ocr_request(payload)
         except ValueError as exc:
@@ -225,14 +221,20 @@ class OCRRequestHandler(BaseHTTPRequestHandler):
             return
         except Exception as exc:  # pragma: no cover - defensive
             self.logger.exception("解析请求失败")
-            self._write_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"解析请求失败: {exc}")
+            self._write_error(HTTPStatus.INTERNAL_SERVER_ERROR, "请求解析失败。")
             return
 
         try:
             result = self.ocr_service.infer(req)
+        except BlockingIOError as exc:
+            self._write_error(HTTPStatus.SERVICE_UNAVAILABLE, str(exc))
+            return
+        except ValueError as exc:
+            self._write_error(HTTPStatus.BAD_REQUEST, str(exc))
+            return
         except Exception as exc:  # pragma: no cover - runtime error path
             self.logger.exception("OCR 推理失败")
-            self._write_error(HTTPStatus.INTERNAL_SERVER_ERROR, f"OCR 推理失败: {exc}")
+            self._write_error(HTTPStatus.INTERNAL_SERVER_ERROR, "OCR 推理失败，请查看服务端日志。")
             return
 
         response_body = {
@@ -265,6 +267,7 @@ class OCRRequestHandler(BaseHTTPRequestHandler):
         return content_length
 
     def _write_error(self, status: HTTPStatus, message: str) -> None:
+        self.close_connection = True
         body = {
             "logId": str(uuid.uuid4()),
             "errorCode": int(status),
@@ -277,6 +280,9 @@ class OCRRequestHandler(BaseHTTPRequestHandler):
         self.send_response(int(status))
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(encoded)))
+        self.send_header("Cache-Control", "no-store")
+        if self.close_connection:
+            self.send_header("Connection", "close")
         self.end_headers()
         self.wfile.write(encoded)
 
@@ -287,9 +293,11 @@ class OCRRequestHandler(BaseHTTPRequestHandler):
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run local PP-OCRv5 HTTP server.")
     parser.add_argument("--host", default="127.0.0.1", help="HTTP server host")
-    parser.add_argument("--port", type=int, default=8080, help="HTTP server port")
+    parser.add_argument("--port", type=int, default=50000, help="HTTP server port")
     parser.add_argument("--det-model-dir", required=True, help="PP-OCRv5_server_det model directory")
     parser.add_argument("--rec-model-dir", required=True, help="PP-OCRv5_server_rec model directory")
+    parser.add_argument("--det-model-name", default="PP-OCRv5_server_det")
+    parser.add_argument("--rec-model-name", default="PP-OCRv5_server_rec")
     parser.add_argument("--device", default="cpu", help="PaddleOCR device, e.g. cpu or gpu")
     parser.add_argument("--log-level", default="INFO", help="Logging level")
     return parser.parse_args()
@@ -312,7 +320,7 @@ def main() -> None:
     ensure_model_dir(args.rec_model_dir, "识别模型目录")
 
     logging.info("加载 PP-OCRv5_server 模型中，请稍候...")
-    service = OCRService(args.det_model_dir, args.rec_model_dir, args.device)
+    service = OCRService(args.det_model_dir, args.rec_model_dir, args.device, args.det_model_name, args.rec_model_name)
     logging.info("模型加载完成")
 
     OCRRequestHandler.ocr_service = service

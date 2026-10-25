@@ -1,0 +1,39 @@
+# 协议与验收边界
+
+核查日期：2026-10-25。只发送到用户配置的服务，不自动切换供应商。用户截图、密钥和完整响应不写日志；测试只发送合成样例。
+
+| 服务 | 请求 | 完成条件 |
+| --- | --- | --- |
+| Azure Document Intelligence | POST `/documentintelligence/documentModels/prebuilt-read:analyze?api-version=2024-11-30`，`base64Source`，`Ocp-Apim-Subscription-Key` | 202 + 同源 Operation-Location；轮询到 succeeded；解析行和归一化坐标 |
+| Mistral OCR | POST `/v1/ocr`，Bearer，`document.type=image_url`，data URL，`include_blocks=true` | 200 + 有效 pages；优先结构块，旧返回回退 Markdown；表格不重复 |
+| OpenAI Chat | POST `/chat/completions`，Bearer，image_url | 正常 finish_reason + 可解析文字 |
+| OpenAI Responses | POST `/responses`，`store=false`，input_image | completed + 可解析文字 |
+| Gemini | POST `/models/{model}:generateContent`，inlineData；官方域名使用 x-goog-api-key | 正常候选，忽略 thought 部分 |
+| Claude | POST `/messages`，x-api-key，版本 2026-10-21 | end_turn / stop_sequence，忽略 thinking，截断报错 |
+| PaddleOCR-VL | Chat 兼容，图片在前，`OCR:` 在后，temperature=0 | 专用任务识别结果；普通模型不被强制设置采样参数 |
+| 本地 Paddle | POST `/ocr`，file Base64 | 有效 ocrResults / rec_texts |
+| 百度 jobs | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
+
+Mistral 最新稳定 OCR 为 4.1；latest 可随官方更新，固定版本用于复现。插件请求 inline Markdown 表格，关闭图片 Base64 回传以缩小响应。不调用批处理、上传持久文件或生成额外批量任务。
+
+Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用。Mistral 返回段落级结构块；保留文本和可用坐标，但不把段落框冒称行级定位精度。多页响应不把不同页坐标覆盖到同一截图。
+
+总超时覆盖图片提交、轮询及下载。生成/提交请求不盲目重发；百度仅在明确拒绝模型参数时按原策略换模型。取消信号由宿主提供时使用；Bob 当前 OCR query 文档未承诺所有入口都提供取消信号，因此每条路径另有截止时间保证结束。
+
+## 本次验证
+
+- 旧版 5 个故障回归均失败；新实现修复 URL query、长行截断、异常结束、字面标签和无效验证路径。
+- Azure KEY1 真实调用：202 → 200 succeeded，公开样例三行准确；经插件相同代码调用再次准确，并返回三个坐标框。
+- 原有 SiliconFlow PaddleOCR-VL-1.5：旧提示生成错误文本，按官方任务格式修正后同图三行准确。
+- Mistral 模型列表真实请求返回 200，列出 latest 与 OCR 4.1；识别请求返回 429 / Rate limit exceeded。用户要求停止其在线验收，未宣称识别成功。
+- 其他模型协议及 Baidu 的本地协议夹具不是账户权限验证。
+- 本机未运行 Paddle 模型服务，且没有 Docker CLI；服务端边界/并发/端口/Relay 通过离线测试，Docker 构建与完整模型推理尚未在本机验收。
+
+## 官方依据
+
+- [Microsoft Analyze Document](https://learn.microsoft.com/en-us/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-v4.0%20(2024-11-30))
+- [Document Intelligence Read](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/prebuilt/read?view=doc-intel-4.0.0)
+- [Mistral OCR 4.1](https://docs.mistral.ai/models/ocr-4-1) · [OCR API](https://docs.mistral.ai/api/endpoint/ocr) · [结构块与表格](https://docs.mistral.ai/studio/document-processing/basic_ocr)
+- [PaddleOCR-VL vLLM 官方任务格式](https://github.com/vllm-project/recipes/blob/main/PaddlePaddle/PaddleOCR-VL.md)
+- [PaddleOCR 输入契约](https://www.paddleocr.ai/main/en/version3.x/pipeline_usage/OCR.html)
+- [Bob OCR](https://bobtranslate.com/plugin/quickstart/ocr.html) · [OCR 结果与坐标](https://bobtranslate.com/plugin/object/ocrresult.html) · [网络与取消](https://bobtranslate.com/plugin/api/http.html)

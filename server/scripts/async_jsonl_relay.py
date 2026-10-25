@@ -1,161 +1,91 @@
 #!/usr/bin/env python3
-"""Local relay service for fetching Baidu async OCR JSONL result URLs.
-
-This avoids signature mismatch issues observed in Bob plugin runtime by proxying
-jsonUrl downloads through native Python urllib on localhost.
-"""
-
+"""Loopback relay for signed Baidu result URLs; bounded replies and redirects."""
 from __future__ import annotations
-
 import argparse
+import ipaddress
 import json
 import socket
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Final
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qs, urlparse
-from urllib.request import Request, urlopen
+from urllib.parse import parse_qs, urlsplit
+from urllib.request import Request, HTTPRedirectHandler, build_opener
 
-ALLOWED_HOST_SUFFIXES: Final[tuple[str, ...]] = (
-    "bcebos.com",
-    "baidubce.com",
-    "aistudio-app.com",
-)
+ALLOWED_HOST_SUFFIXES = ('bcebos.com', 'baidubce.com', 'aistudio-app.com')
+MAX_BYTES = 16 * 1024 * 1024
 
+def validate_target(url: str) -> str:
+    if len(url) > 8192 or any(ord(c) < 33 for c in url):
+        raise ValueError('invalid result URL')
+    target = urlsplit(url)
+    host = (target.hostname or '').lower()
+    if target.scheme != 'https' or target.username or target.password or target.fragment or target.port not in (None, 443):
+        raise ValueError('HTTPS result URL required')
+    if not any(host == suffix or host.endswith('.' + suffix) for suffix in ALLOWED_HOST_SUFFIXES):
+        raise ValueError('result host not allowed')
+    addresses = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
+    if not addresses or any(not ipaddress.ip_address(a[4][0]).is_global for a in addresses):
+        raise ValueError('result host resolves to a private address')
+    return url
+
+class SafeRedirect(HTTPRedirectHandler):
+    max_redirections = 3
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        validate_target(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+def fetch_result(url: str, timeout: int) -> str:
+    validate_target(url)
+    request = Request(url, headers={'User-Agent': 'JK-LLM-OCR-Relay/0.3', 'Accept': 'application/json,text/plain'})
+    with build_opener(SafeRedirect()).open(request, timeout=timeout) as response:
+        raw = response.read(MAX_BYTES + 1)
+        if len(raw) > MAX_BYTES:
+            raise ValueError('result exceeds 16 MB')
+        return raw.decode('utf-8')
 
 class RelayHandler(BaseHTTPRequestHandler):
-    server_version = "JKLLMOCRRelay/0.1"
-
-    def do_GET(self) -> None:  # noqa: N802
-        parsed = urlparse(self.path)
-        if parsed.path == "/healthz":
-            self._send_json(200, {"status": "ok"})
+    server_version = 'JKLLMOCRRelay/0.3'
+    def do_GET(self) -> None:
+        parsed = urlsplit(self.path)
+        if parsed.path == '/healthz':
+            self._send(200, {'status':'ok'})
             return
-
-        if parsed.path != "/fetch-jsonl":
-            self._send_text(404, "not found")
+        if parsed.path != '/fetch-jsonl':
+            self._send(404, {'error':'not found'})
             return
-
-        query = parse_qs(parsed.query, keep_blank_values=False)
-        raw_url = ""
-        response_format = "text"
-        if "url" in query and query["url"]:
-            raw_url = query["url"][0].strip()
-        if "format" in query and query["format"]:
-            response_format = query["format"][0].strip().lower()
-
-        if not raw_url:
-            self._send_json(400, {"error": "missing url query"})
+        if self.headers.get('Origin'):
+            self._send(403, {'error':'browser-origin requests are not supported'})
             return
-
-        if len(raw_url) > 4096:
-            self._send_json(400, {"error": "url too long"})
-            return
-
-        target = urlparse(raw_url)
-        if target.scheme not in ("http", "https"):
-            self._send_json(400, {"error": "unsupported url scheme"})
-            return
-
-        hostname = (target.hostname or "").lower()
-        if not self._is_allowed_host(hostname):
-            self._send_json(403, {"error": f"host not allowed: {hostname}"})
-            return
-
-        timeout_sec = getattr(self.server, "fetch_timeout", 45)
-        request = Request(
-            raw_url,
-            method="GET",
-            headers={
-                "User-Agent": "JK-LLM-OCR-Local-Relay/0.1",
-                "Accept": "application/json,text/plain,*/*",
-            },
-        )
-
+        fields = parse_qs(parsed.query)
+        target = fields.get('url',[''])[0]
         try:
-            with urlopen(request, timeout=timeout_sec) as response:
-                body = response.read()
-                if response_format == "json":
-                    text = body.decode("utf-8", errors="replace")
-                    self._send_json(
-                        200,
-                        {
-                            "ok": True,
-                            "url": raw_url,
-                            "size": len(body),
-                            "text": text,
-                        },
-                    )
-                    return
-                self._send_bytes(200, body, "text/plain; charset=utf-8")
+            text = fetch_result(target, getattr(self.server,'fetch_timeout',45))
+            self._send(200, {'ok':True,'text':text} if fields.get('format')==['json'] else text)
         except HTTPError as error:
-            body = error.read()
-            # Keep upstream status/body to aid debugging.
-            if response_format == "json":
-                detail = ""
-                try:
-                    detail = body.decode("utf-8", errors="replace")
-                except Exception:
-                    detail = repr(body[:200])
-                self._send_json(error.code, {"error": "upstream http error", "detail": detail})
-                return
-            self._send_bytes(error.code, body, "text/plain; charset=utf-8")
-        except (URLError, TimeoutError, socket.timeout) as error:
-            self._send_json(
-                502,
-                {
-                    "error": "relay fetch failed",
-                    "detail": str(error),
-                },
-            )
-
+            self._send(error.code, {'error':'upstream HTTP error','status':error.code})
+        except (ValueError, UnicodeError):
+            self._send(400, {'error':'invalid result URL or response'})
+        except (URLError, TimeoutError, socket.timeout, OSError):
+            self._send(502, {'error':'relay fetch failed'})
     def log_message(self, fmt: str, *args: object) -> None:
-        # Use standard stderr log format with remote address + path
-        super().log_message(fmt, *args)
-
-    def _is_allowed_host(self, hostname: str) -> bool:
-        if not hostname:
-            return False
-        for suffix in ALLOWED_HOST_SUFFIXES:
-            if hostname == suffix or hostname.endswith("." + suffix):
-                return True
-        return False
-
-    def _send_json(self, status: int, payload: dict[str, object]) -> None:
-        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-        self._send_bytes(status, body, "application/json; charset=utf-8")
-
-    def _send_text(self, status: int, text: str) -> None:
-        self._send_bytes(status, text.encode("utf-8"), "text/plain; charset=utf-8")
-
-    def _send_bytes(self, status: int, body: bytes, content_type: str) -> None:
+        # Signed URL query strings are credentials. Never log request targets.
+        super().log_message('%s', urlsplit(self.path).path)
+    def _send(self, status: int, payload: object) -> None:
+        body = payload.encode('utf-8') if isinstance(payload,str) else json.dumps(payload,ensure_ascii=False).encode('utf-8')
         self.send_response(status)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
+        self.send_header('Content-Type','text/plain; charset=utf-8' if isinstance(payload,str) else 'application/json')
+        self.send_header('Content-Length',str(len(body)))
+        self.send_header('Cache-Control','no-store')
         self.end_headers()
         self.wfile.write(body)
 
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="JK-LLM-OCR local relay for async JSONL downloads")
-    parser.add_argument("--host", default="127.0.0.1", help="listen host")
-    parser.add_argument("--port", type=int, default=50123, help="listen port")
-    parser.add_argument("--timeout", type=int, default=45, help="upstream fetch timeout seconds")
-    return parser.parse_args()
-
-
 def main() -> None:
-    args = parse_args()
-    server = ThreadingHTTPServer((args.host, args.port), RelayHandler)
-    server.fetch_timeout = max(5, min(args.timeout, 300))
-    print(
-        f"[relay] listening on http://{args.host}:{args.port} "
-        f"(timeout={server.fetch_timeout}s)",
-        flush=True,
-    )
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--host',default='127.0.0.1');parser.add_argument('--port',type=int,default=50123);parser.add_argument('--timeout',type=int,default=45)
+    args=parser.parse_args()
+    if args.host not in ('127.0.0.1','localhost'):
+        parser.error('relay must listen on loopback')
+    server=ThreadingHTTPServer((args.host,args.port),RelayHandler)
+    server.fetch_timeout=max(5,min(args.timeout,60))
+    print(f'[relay] listening on http://{args.host}:{args.port}',flush=True)
     server.serve_forever()
-
-
-if __name__ == "__main__":
-    main()
+if __name__=='__main__':main()

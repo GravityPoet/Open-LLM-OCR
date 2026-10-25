@@ -26,9 +26,9 @@ Bob 插件现在支持 3 种结果下载策略：
 
 ## 需要安装什么？
 
-不需要额外安装。
+使用现有 Python 运行，不需要独立 App。
 
-- macOS 自带 `python3`
+- 需要本机已安装 `python3`；并非所有 macOS 都预装 Python
 - 使用仓库内脚本：`server/scripts/async_jsonl_relay.py`
 
 ## 快速启动
@@ -65,3 +65,5 @@ relay 默认只允许以下域名后缀：
 - `aistudio-app.com`
 
 并且仅监听 `127.0.0.1`。
+
+0.3.0 Relay 检查所有重定向、只接受 HTTPS 百度存储域名、限制返回 16 MB，日志不包含签名 URL。需要手动重启你部署的 Relay 才会使用新版脚本；安装 Bob 插件不会重启后台服务。

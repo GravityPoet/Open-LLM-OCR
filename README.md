@@ -1,167 +1,87 @@
-<div align="center">
-  <h1>JK-LLM-OCR</h1>
-  <p><strong>本地极速隐私 × 云端高精度识别</strong></p>
-  <p>
-    <a href="#下载安装">📥 下载安装</a> ·
-    <a href="#配置指南">⚙️ 配置指南</a> ·
-    <a href="#常见问题">🤔 常见问题</a>
-  </p>
-  <p>
-    <a href="https://github.com/GravityPoet/JK-LLM-OCR/releases"><img src="https://img.shields.io/github/v/release/GravityPoet/JK-LLM-OCR?style=flat-square" alt="release"></a>
-    <img src="https://img.shields.io/badge/Platform-macOS-black?style=flat-square&logo=apple" alt="platform">
-    <img src="https://img.shields.io/badge/Bob-Plugin-blue?style=flat-square" alt="bob-plugin">
-    <img src="https://img.shields.io/badge/OCR-Local+Cloud-success?style=flat-square" alt="ocr-mode">
-  </p>
-</div>
+# JK-LLM-OCR
 
----
+Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
-## ⚡ 为什么你需要这个插件
+## 0.3.0 更新
 
-OCR 真实痛点不是“能不能识别”，而是“在不同场景下是否又快又准”。
+- **微软 OCR**：Document Intelligence `prebuilt-read`，API `2024-11-30`。同一资源的 Endpoint 与一把 Key 即可；自动轮询并保留文字坐标。
+- **Mistral OCR**：原生 `/v1/ocr`，可选最新稳定别名 `mistral-ocr-latest`、固定 OCR 4.1 或自定义模型。保留分页、表格和结构块。
+- **视觉大模型**：OpenAI Chat / Responses、Gemini generateContent、Claude Messages。完整端点自动识别，保留代理路径与 query 参数。
+- **PaddleOCR-VL 修复**：按其专用格式发送图片和 `OCR:` 任务提示。通用聊天提示会导致识别错误；自定义 Table / Formula 等任务提示仍可使用。
+- **结果完整性**：保留空行、代码缩进和字面标签；长行不再静默截断；上游截断、拒绝和失败明确报错。
+- **请求生命周期**：提交、轮询和下载共享总超时；单次完成、迟到回调隔离；宿主传入取消信号时停止后续请求。
+- **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
+- **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-- 纯本地方案：隐私好、速度快，但遇到复杂版面/手写/特殊符号时可能不稳。
-- 纯云端方案：精度高，但有网络延迟、调用成本和数据外发顾虑。
+源码、仓库直装包和本机候选为 **0.3.0**；公开 Release 与自动更新源保持此前发布版本，正式发布后再更新。
 
-`JK-LLM-OCR` 的定位是：**本地优先，云端可切换**。
+## 安装与选择
 
-- 日常截图：走本地 PP-OCRv5，低延迟、低成本。
-- 困难样本：切换云端服务商 OCR（OpenAI 兼容）。
-- 百度官方异步文档解析：单独走 `jobs` 模式，支持 relay 回退下载。
+只需要 `.bobplugin`，无需伴随 App。
 
-## ✨ 核心特性
+| 安装包 | 用途 | 设置 |
+| --- | --- | --- |
+| [JK-LLM-OCR.bobplugin](JK-LLM-OCR.bobplugin) | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
+| [JK-LLM-OCR-Azure.bobplugin](JK-LLM-OCR-Azure.bobplugin) | 只用微软 | Endpoint、Key、总超时三个字段 |
+| [JK-LLM-OCR-Mistral.bobplugin](JK-LLM-OCR-Mistral.bobplugin) | 只用 Mistral | 接口地址、Key、模型、超时 |
 
-- `Local First`：默认本地 OCR，不依赖外部 API。
-- `Cloud Ready`：支持 OpenAI 兼容 OCR。
-- `三模式切换`：在 Bob 里切换本地、云端服务商、百度异步 jobs。
-- `云端可自定义`：Base URL、API Key、模型名、图像细节、OCR 指令都可配。
-- `VPS 方案完整`：支持把本地模型放 VPS，Mac 通过 SSH 隧道调用。
-- `隐私边界清晰`：本地模式不出机；云端模式按你填写的服务商发送图片。
+精简包是可选的独立服务入口；原版也能调用微软和 Mistral。Bob 第三方设置不支持动态折叠，因此原版将连接项靠前、高级项靠后，精简包只保留对应供应商字段。旧版服务无需删除；升级前保留原有地址、模型和密钥。
 
-## 🧠 工作模式
+## 配置
 
-| 模式 | 适合场景 | 优势 | 代价 |
-|---|---|---|---|
-| 本地 PP-OCRv5 | 日常截图、开发文档、常规中英文 | 快、稳定、免费、隐私好 | 极复杂图像精度可能不如云端 |
-| 云端服务商 OCR（OpenAI 兼容） | 复杂排版、难样本、需要更高识别质量 | 识别能力更强，可选更多模型 | 需要联网 + API 成本 |
-| 百度异步文档解析 jobs | 百度官方异步文档 OCR、复杂版面、需要官方模型 | 官方异步接口，支持模型探测与 relay 回退 | 需要联网 + token |
+### 微软 Document Intelligence
 
-## 📦 支持的云端方式
+1. 选择“微软 Document Intelligence”，或安装 Azure 精简包。
+2. Endpoint 填 **Document Intelligence / Form Recognizer 资源**的地址，例如 `https://example.cognitiveservices.azure.com/`。
+3. Key 填同一资源的 KEY1 或 KEY2 中的一把，不需要同时填写，也不需要区域字段。
+4. 点击“验证”。插件发送 `base64Source`，收到 202 后轮询同源 `Operation-Location`，成功后解析 `analyzeResult.pages[].lines`。
 
-当前插件支持：
+Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看起来相似也不能混用。401 请先核对资源类型和 Endpoint，不要反复换图片。
 
-1. `云端服务商 OCR（OpenAI 兼容）`：`/chat/completions`
-2. `百度异步文档解析 jobs`：`/api/v2/ocr/jobs`
+### Mistral
 
-硅基流动示例（OpenAI 兼容）：
+- 选择“Mistral OCR”或安装精简包。
+- 接口地址：`https://api.mistral.ai/v1`；填写该平台 API Key。
+- 默认 `mistral-ocr-latest`；截至 2026-10-25 指向 OCR 4.1，也可固定 `mistral-ocr-4-1`。
+- 使用原生 `/ocr` 接口。图片发送到配置的 Mistral 服务；不发送 Chat 请求或温度参数。
 
-- `云端 Base URL`: `https://api.siliconflow.cn/v1`
-- `云端模型名`: `PaddlePaddle/PaddleOCR-VL-1.5`
-- `云端图像细节`: `high`
+### 视觉大模型
 
-百度异步 jobs 说明见：
+- 选择“视觉大模型 API”，填写 Base URL、API Key 和支持图像的模型名。
+- 协议选择 Chat、Responses、Gemini 或 Claude；完整接口地址优先。
+- PaddleOCR-VL 会把旧版默认识别提示转换为官方 `OCR:`；自定义任务提示不被替换。
+- Bob OCR 结果接口一次完成，不提供翻译插件那样的逐字刷新。网络流式接收不能冒充 Bob OCR 流式展示。
 
-- [`docs/baidu-async-relay.md`](docs/baidu-async-relay.md)
-- [`docs/cloud-provider-ocr.md`](docs/cloud-provider-ocr.md)
+### 本地与百度
 
-## 🚀 下载安装
+- [本地服务配置](docs/local-server.md)：默认 `http://127.0.0.1:50000/ocr`。
+- [VPS / Mac mini 远程部署](docs/vps-remote-ocr.md)：保留原有端口可通过 `PORT` 显式指定。
+- [Docker 部署](docs/docker.md)：默认只映射宿主回环端口，模型挂载为只读。
+- [百度异步与 Relay](docs/baidu-async-relay.md)：保留原服务配置；不跨供应商自动回退上传图片。
+- [协议、验收与限制](docs/protocols.md) · [GitHub issue 审核](docs/issue-review.md)
 
-1. 打开 [Releases](https://github.com/GravityPoet/JK-LLM-OCR/releases) 下载最新 `JK-LLM-OCR.bobplugin`。
-2. 双击 `.bobplugin` 文件安装。
-3. 在 Bob 中选择：`JK-LLM-OCR—GravityPoet开发`。
+## 开发
 
-## ⚙️ 配置指南
+Node.js 20+、Python 3.10+；插件开发检查不需要安装 npm 依赖。Paddle 模型推理的依赖见服务端文档。
 
-### 本地模式（默认）
+```bash
+npm run check
+npm test
+npm run build
+npm run verify
+swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
+```
 
-- `[模式] OCR 服务模式`：`本地服务`
-- `[本地] OCR 服务地址`：`http://127.0.0.1:50000/ocr`
+`main.js` 只暴露 Bob 入口；`lib/` 按配置、生命周期、图片、结果与服务商分工。归档可重复构建，`--check` 比对源码与包字节。测试不使用真实凭据；`scripts/live-smoke.cjs` 只有在显式从 stdin 提供配置后才发送合成图片。
 
-教程：
+## English
 
-- 本机部署：[`docs/local-server.md`](docs/local-server.md)
-- VPS + SSH 隧道：[`docs/vps-remote-ocr.md`](docs/vps-remote-ocr.md)
+Version 0.3.0 adds native Azure Document Intelligence Read and Mistral OCR 4.1/latest, plus Chat, Responses, Gemini and Claude image requests. Existing plugin identity and saved option keys are preserved. Optional Azure and Mistral packages provide compact native settings without a companion application.
 
-### 云端服务商模式
+Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 
-- `[模式] OCR 服务模式`：`云端服务商 OCR（OpenAI兼容）`
-- `[云端服务商] Base URL`：例如 `https://api.siliconflow.cn/v1`
-- `[云端服务商] 模型名`：例如 `PaddlePaddle/PaddleOCR-VL-1.5`
-- `[云端服务商] API Key`：填写服务商 key
+Use the matching resource type and key for Azure; Computer Vision and Document Intelligence are not interchangeable. Cloud calls may incur provider charges. Mistral uses `/v1/ocr`, not Chat Completions. OCR in Bob completes once; it does not expose translation-style incremental rendering. The source/direct-install candidate is 0.3.0; the published release/update feed is changed only during an explicit release.
 
-### 百度异步 jobs 模式
+## License
 
-- `[模式] OCR 服务模式`：`百度异步文档解析 jobs`
-- `[百度异步] 服务地址`：`https://paddleocr.aistudio-app.com/api/v2/ocr/jobs`
-- `[百度异步] Access Token`：AI Studio token
-- `[百度异步] 模型`：推荐 `自动检测（推荐）`
-- `[百度异步] Relay 地址(可选)`：默认 `http://127.0.0.1:50123/fetch-jsonl`
-
-## 💡 Prompt 进阶玩法
-
-`[云端服务商] OCR 指令` 支持自定义，你可以让结果更贴近业务输出：
-
-- 代码提取：`请识别图片中的代码，仅输出代码，不要解释。`
-- 表格提取：`请将图片中的表格输出为 Markdown 表格。`
-- 清洗输出：`请仅返回纯文本，保留换行与段落结构。`
-
-## 🤔 常见问题
-
-### Q1: 本地模式和云端模式会自动路由吗？
-
-当前版本是**手动切换模式**，不是自动路由。这样更可控，也更容易管理成本与隐私边界。
-
-### Q2: 为什么插件校验出现 HTTP 404？
-
-通常是“模式和地址配错”：
-
-- 云端服务商模式要填 `/v1` 或 `/chat/completions`
-- 百度异步模式要填 `/jobs` 或其根地址
-
-### Q2.1: 云端服务商提示“请求云端 OCR 服务失败”？
-
-优先检查这 4 项：
-
-- `[模式] OCR 服务模式` 必须是 `云端服务商 OCR（OpenAI兼容）`
-- `[云端服务商] Base URL` 推荐 `https://api.siliconflow.cn/v1`
-- `[云端服务商] API Key` 只填 key 本体，不要再手动加 `Bearer `
-- 截图格式建议 PNG/JPG（若是 TIFF/HEIC，当前版本会在插件侧直接拦截提示）
-
-### Q2.2: 百度异步 jobs 在结果下载时报 403（签名不匹配）？
-
-- 新版本支持显式选择 3 种结果下载策略：
-  - `只走直连`
-  - `直连失败回退 Relay`
-  - `只走 Relay`
-- 公开版默认使用：`直连失败回退 Relay`
-- 如果你本机已部署 relay 且只追求稳定，可手动切到：`只走 Relay`
-- 如果你还想继续试一次纯直连，再手动切到：`只走直连`
-- 在需要 relay 的策略下，确认：`异步结果 Relay 地址(可选)` 为 `http://127.0.0.1:50123/fetch-jsonl`
-- 启动本机 relay 后重试。
-
-详细步骤见：[`docs/baidu-async-relay.md`](docs/baidu-async-relay.md)
-
-### Q3: 会上传我的截图吗？
-
-- 本地模式：不会上传到第三方。
-- 云端服务商模式：会发送到你配置的云端服务商。
-- 百度异步模式：会发送到百度 AI Studio 官方接口。
-
-### Q4: 支持 OCR 流式输出吗？
-
-不支持。Bob OCR 插件接口是一次性返回（completion），不是 translate 的 stream 回调模型。
-
-## 🗺️ Roadmap
-
-- [ ] 自动路由策略（按图片复杂度自动切换本地/云端）
-- [ ] 更多云端返回格式兼容（结构化字段增强）
-- [ ] OCR 质量对比样例集与基准报告
-
-## 🤝 贡献与反馈
-
-欢迎提交 Issue / PR：
-
-- [Issues](https://github.com/GravityPoet/JK-LLM-OCR/issues)
-- [Pull Requests](https://github.com/GravityPoet/JK-LLM-OCR/pulls)
-
-如果这个插件帮你省时间，欢迎点个 ⭐。
+[MIT](LICENSE). Existing contributor attribution is preserved.

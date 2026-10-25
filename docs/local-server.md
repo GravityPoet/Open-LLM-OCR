@@ -102,3 +102,9 @@ curl -sS http://127.0.0.1:50000/healthz
 2. 端口是否被占用：`lsof -nP -iTCP:50000 -sTCP:LISTEN`
 3. Bob 里 `OCR 后端模式` 是否为“本地 PP-OCRv5_server”
 4. Bob 里 `OCR 服务地址` 是否仍是 `http://127.0.0.1:50000/ocr`
+
+## 兼容模型与端口
+
+0.3.0 的 Python、启动脚本、systemd 和插件默认均为 50000。已有 8080 部署可继续使用 `PORT=8080`，并在 Bob 填对应地址。
+
+支持 `DET_MODEL_NAME` / `REC_MODEL_NAME` 与 `DET_MODEL_DIR` / `REC_MODEL_DIR` 成对指定兼容的 Paddle 检测和识别模型。默认仍为 PP-OCRv5_server，不在升级时下载替换大模型。PaddleOCR-VL 等视觉生成模型需单独启动其推理服务，再由插件的视觉大模型入口接入。

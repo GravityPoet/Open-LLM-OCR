@@ -6,8 +6,10 @@ MODELS_DIR_DEFAULT="${ROOT_DIR}/models"
 VENV_PYTHON_DEFAULT="${ROOT_DIR}/.venv/bin/python"
 
 HOST="${HOST:-127.0.0.1}"
-PORT="${PORT:-8080}"
+PORT="${PORT:-50000}"
 DEVICE="${DEVICE:-cpu}"
+DET_MODEL_NAME="${DET_MODEL_NAME:-PP-OCRv5_server_det}"
+REC_MODEL_NAME="${REC_MODEL_NAME:-PP-OCRv5_server_rec}"
 DET_MODEL_DIR="${DET_MODEL_DIR:-${MODELS_DIR_DEFAULT}/PP-OCRv5_server_det_infer}"
 REC_MODEL_DIR="${REC_MODEL_DIR:-${MODELS_DIR_DEFAULT}/PP-OCRv5_server_rec_infer}"
 PYTHON_BIN="${PYTHON_BIN:-}"
@@ -67,5 +69,7 @@ exec "${PYTHON_BIN}" "${ROOT_DIR}/scripts/ppocrv5_http_server.py" \
   --port "${PORT}" \
   --device "${DEVICE}" \
   --det-model-dir "${DET_MODEL_DIR}" \
-  --rec-model-dir "${REC_MODEL_DIR}"
+  --rec-model-dir "${REC_MODEL_DIR}" \
+  --det-model-name "${DET_MODEL_NAME}" \
+  --rec-model-name "${REC_MODEL_NAME}"
 
