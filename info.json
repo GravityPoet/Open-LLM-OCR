@@ -1,9 +1,9 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
-  "summary": "本地、大模型与微软 Document Intelligence 图片识别。",
+  "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
   "icon": "",
   "author": "Open-LLM-OCR Contributors",
   "homepage": "https://github.com/GravityPoet/Open-LLM-OCR",
@@ -30,6 +30,16 @@
         {
           "title": "Mistral OCR",
           "value": "mistral",
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+        },
+        {
+          "title": "Roboflow GLM-OCR",
+          "value": "roboflow",
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+        },
+        {
+          "title": "OpenDocRouter OCR 模型",
+          "value": "openDocRouter",
           "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },
         {
@@ -165,6 +175,91 @@
         "type": "visible",
         "height": "44",
         "placeholderText": "请识别图片中的全部文字，仅返回纯文本结果，保留原有换行，不要解释。"
+      }
+    },
+    {
+      "identifier": "roboflowBaseUrl",
+      "type": "text",
+      "title": "Roboflow · 接口地址",
+      "defaultValue": "https://serverless.roboflow.com",
+      "desc": "Roboflow GLM-OCR Serverless API 地址。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "https://serverless.roboflow.com"
+      }
+    },
+    {
+      "identifier": "roboflowApiKey",
+      "type": "text",
+      "title": "Roboflow · Private API Key",
+      "defaultValue": "",
+      "desc": "仅 Roboflow 使用；不要填写 Public/Publishable Key。",
+      "textConfig": {
+        "type": "secure",
+        "placeholderText": "Private API Key"
+      }
+    },
+    {
+      "identifier": "roboflowPrompt",
+      "type": "text",
+      "title": "Roboflow · OCR 指令",
+      "defaultValue": "OCR",
+      "desc": "默认 OCR；可改为 Text Recognition 等任务提示。",
+      "textConfig": {
+        "type": "visible"
+      }
+    },
+    {
+      "identifier": "roboflowMaxNewTokens",
+      "type": "text",
+      "title": "Roboflow · 最大输出 Token",
+      "defaultValue": "2048",
+      "desc": "64–8192；文字越多消耗越高。",
+      "textConfig": {
+        "type": "visible"
+      }
+    },
+    {
+      "identifier": "openDocRouterBaseUrl",
+      "type": "text",
+      "title": "OpenDocRouter · 接口地址",
+      "defaultValue": "https://www.opendocrouter.ai",
+      "desc": "OpenDocRouter Parse API 地址。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "https://www.opendocrouter.ai"
+      }
+    },
+    {
+      "identifier": "openDocRouterApiKey",
+      "type": "text",
+      "title": "OpenDocRouter · API Key",
+      "defaultValue": "",
+      "desc": "仅 OpenDocRouter 使用。",
+      "textConfig": {
+        "type": "secure",
+        "placeholderText": "API Key"
+      }
+    },
+    {
+      "identifier": "openDocRouterMaxPages",
+      "type": "text",
+      "title": "OpenDocRouter · 最大页数",
+      "defaultValue": "50",
+      "desc": "1–200；请求使用 sync 与 cache=false。",
+      "textConfig": {
+        "type": "visible"
+      }
+    },
+    {
+      "identifier": "openDocRouterModel",
+      "type": "text",
+      "title": "OpenDocRouter · 模型",
+      "defaultValue": "llamaindex/ocria-1",
+      "desc": "默认使用 ocria-1；可按 OpenDocRouter 模型列表替换。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "llamaindex/ocria-1"
       }
     },
     {

@@ -1,6 +1,6 @@
 # 云端 OCR 配置
 
-见 [README](../README.md#配置) 与 [协议说明](protocols.md)。0.3.0 保留所有旧连接配置键，增加微软 Document Intelligence 与 Mistral 原生 OCR。
+见 [README](../README.md#配置) 与 [协议说明](protocols.md)。0.4.0 保留所有旧连接配置键，增加微软 Document Intelligence 与 Mistral 原生 OCR。
 
 视觉大模型支持 Chat、Responses、Gemini 与 Claude；同一个 API Key 并不代表所有协议都可用。完整端点优先决定协议，根地址按协议补齐；代理路径与查询参数保留。不要把微软 Document Intelligence 的 Key 填给 Computer Vision。
 

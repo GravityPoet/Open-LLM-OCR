@@ -30,7 +30,7 @@ for (const o of info.options) {
     !o.menuValues.some((v) => v.value === o.defaultValue)
   )
     throw Error("Invalid default " + o.identifier);
-  if (/Key|Token/.test(o.identifier) && o.textConfig?.type !== "secure")
+  if (/(?:ApiKey|apiKey|accessToken|AccessToken)$/.test(o.identifier) && o.textConfig?.type !== "secure")
     throw Error("Visible credential");
 }
 console.log("语法、版本与设置检查通过");

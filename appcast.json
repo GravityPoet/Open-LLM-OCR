@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.4.0",
+      "desc": "新增 Roboflow GLM-OCR 与 OpenDocRouter OCR 模型 原生 OCR 适配，保留图片/PDF结构与分页；更新品牌与供应商配置。",
+      "sha256": "252d45de30a7f3d063fa80994b68f90f47ef3e5f5dd2e57babd1a71893252eb9",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.0/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1792905390621
+    },
+    {
       "version": "0.3.0",
       "desc": "Open-LLM-OCR 重做：加入 Azure Document Intelligence、Mistral OCR 4.1、视觉大模型多协议、PaddleOCR-VL 专用任务格式、结果完整性与本地服务安全改进；完成仓库品牌改名，保留原 Bob identifier。",
       "sha256": "5a21824a3bea5ce3f061b3ca6fae7c1857043f6a0a32ae9188dd0b1f068f896a",

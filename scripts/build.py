@@ -6,18 +6,22 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def archive(profile: str = "standard") -> bytes:
     info = json.loads((ROOT / 'info.json').read_bytes())
-    if profile in ("azure", "mistral"):
+    if profile in ("azure", "mistral", "roboflow", "openDocRouter"):
         info['identifier'] += '.' + profile
-        info['name'] = 'Open-LLM-OCR · ' + ('微软 OCR' if profile == 'azure' else 'Mistral OCR')
-        info['summary'] = 'Azure Document Intelligence Read' if profile == 'azure' else 'Mistral OCR 4.1 与最新模型'
+        info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflow':'Roboflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
+        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','openDocRouter':'OpenDocRouter MinerU2.5-Pro'}.get(profile, info['summary'])
         info.pop('appcast', None)
-        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec'))]
+        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowPrompt','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
         for option in info['options']:
             if option['identifier'] == 'cloudBaseUrl':
                 option.update(title='Azure Endpoint' if profile == 'azure' else 'Mistral Endpoint', defaultValue='' if profile == 'azure' else 'https://api.mistral.ai/v1', desc='当前服务的接口地址。')
                 option['textConfig'] = {'type': 'visible', 'placeholderText': 'https://example.cognitiveservices.azure.com/' if profile == 'azure' else 'https://api.mistral.ai/v1'}
             if option['identifier'] == 'cloudApiKey':
                 option.update(title='API Key', desc='填写当前服务的 API Key。')
+            if profile == 'roboflow' and option['identifier'] == 'roboflowBaseUrl':
+                option.update(title='Roboflow Endpoint', desc='固定使用 /infer/lmm。')
+            if profile == 'openDocRouter' and option['identifier'] == 'openDocRouterBaseUrl':
+                option.update(title='OpenDocRouter Endpoint', desc='固定使用 /v1/parse。')
     buf = io.BytesIO()
     files = [ROOT/'main.js', ROOT/'info.json', ROOT/'ocr-sample.png', *sorted((ROOT/'lib').glob('*.js'))]
     with zipfile.ZipFile(buf, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
@@ -31,7 +35,7 @@ def archive(profile: str = "standard") -> bytes:
 
 def main() -> None:
     parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args()
-    for profile,name in (('standard','Open-LLM-OCR.bobplugin'),('azure','Open-LLM-OCR-Azure.bobplugin'),('mistral','Open-LLM-OCR-Mistral.bobplugin')):
+    for profile,name in (('standard','Open-LLM-OCR.bobplugin'),('azure','Open-LLM-OCR-Azure.bobplugin'),('mistral','Open-LLM-OCR-Mistral.bobplugin'),('roboflow','Open-LLM-OCR-Roboflow.bobplugin'),('openDocRouter','Open-LLM-OCR-OpenDocRouter.bobplugin')):
         p=ROOT/name;data=archive(profile)
         if args.check:
             if not p.is_file() or p.read_bytes()!=data: raise SystemExit('Archive does not match source: '+name)
