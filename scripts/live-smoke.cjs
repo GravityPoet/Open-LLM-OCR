@@ -82,7 +82,7 @@ p.ocr(
     const passed =
       text.includes("AZURE OCR TEST 123") &&
       text.includes("42.50 EUR") &&
-      text.includes("JK-LLM-OCR 2026");
+      text.includes("Open-LLM-OCR 2026");
     console.log(
       JSON.stringify({
         mode: options.serviceMode,

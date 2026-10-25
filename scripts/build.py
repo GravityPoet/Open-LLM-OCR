@@ -8,7 +8,7 @@ def archive(profile: str = "standard") -> bytes:
     info = json.loads((ROOT / 'info.json').read_bytes())
     if profile in ("azure", "mistral"):
         info['identifier'] += '.' + profile
-        info['name'] = 'JK-LLM-OCR · ' + ('微软 OCR' if profile == 'azure' else 'Mistral OCR')
+        info['name'] = 'Open-LLM-OCR · ' + ('微软 OCR' if profile == 'azure' else 'Mistral OCR')
         info['summary'] = 'Azure Document Intelligence Read' if profile == 'azure' else 'Mistral OCR 4.1 与最新模型'
         info.pop('appcast', None)
         info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec'))]
@@ -31,7 +31,7 @@ def archive(profile: str = "standard") -> bytes:
 
 def main() -> None:
     parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args()
-    for profile,name in (('standard','JK-LLM-OCR.bobplugin'),('azure','JK-LLM-OCR-Azure.bobplugin'),('mistral','JK-LLM-OCR-Mistral.bobplugin')):
+    for profile,name in (('standard','Open-LLM-OCR.bobplugin'),('azure','Open-LLM-OCR-Azure.bobplugin'),('mistral','Open-LLM-OCR-Mistral.bobplugin')):
         p=ROOT/name;data=archive(profile)
         if args.check:
             if not p.is_file() or p.read_bytes()!=data: raise SystemExit('Archive does not match source: '+name)

@@ -19,7 +19,7 @@
     },
     {
       "version": "0.2.7",
-      "desc": "品牌：插件安装显示名统一为 JK-LLM-OCR (Local + Cloud)，不再随模式切换改变名称。",
+      "desc": "品牌：插件安装显示名统一为 Open-LLM-OCR (Local + Cloud)，不再随模式切换改变名称。",
       "sha256": "c48c860d3b4626cc477da7fb903537629c4e22f7cb2795236141751263b39e49",
       "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.7/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
@@ -67,7 +67,7 @@
     },
     {
       "version": "0.1.8",
-      "desc": "品牌：安装显示名改为 JK-LLM-OCR—GravityPoet开发；修正：移除 OCR 插件中误导性的“思考强度/输出模式”配置，保留 healthz 校验。",
+      "desc": "品牌：安装显示名改为 Open-LLM-OCR—GravityPoet开发；修正：移除 OCR 插件中误导性的“思考强度/输出模式”配置，保留 healthz 校验。",
       "sha256": "b28f3e40b3deae0d47da6579bc21587e0ec5a87b3af4d7f26cda000a383b0642",
       "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.8/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
@@ -75,7 +75,7 @@
     },
     {
       "version": "0.1.5",
-      "desc": "去隐私：插件显示名统一为 JK-LLM-OCR；默认 OCR 地址改为 http://127.0.0.1:50000/ocr。",
+      "desc": "去隐私：插件显示名统一为 Open-LLM-OCR；默认 OCR 地址改为 http://127.0.0.1:50000/ocr。",
       "sha256": "9e729662a789bd4ef86af736b63ede50db3af5aecb44ac849ca5879e6f122d40",
       "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.5/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
@@ -83,7 +83,7 @@
     },
     {
       "version": "0.1.4",
-      "desc": "品牌：公开版插件名统一为 JK-LLM-OCR。",
+      "desc": "品牌：公开版插件名统一为 Open-LLM-OCR。",
       "sha256": "ca4fdf89e164f04b88e867d0302015b2827f9afbda1d4f4fa8265d3ceaacda23",
       "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.4/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",

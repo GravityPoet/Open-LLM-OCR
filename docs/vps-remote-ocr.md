@@ -67,8 +67,8 @@ sudo apt install -y python3 python3-venv python3-pip git curl
 
 ```bash
 cd ~
-git clone https://github.com/GravityPoet/JK-LLM-OCR.git
-cd JK-LLM-OCR/server
+git clone https://github.com/GravityPoet/Open-LLM-OCR.git
+cd Open-LLM-OCR/server
 ```
 
 ### 1.3 创建 venv 并安装依赖（已验证组合）
@@ -98,7 +98,7 @@ python -c "import paddle; import paddleocr; print('ok')"
 ### 1.4 下载 PP-OCRv5_server 模型
 
 ```bash
-cd ~/JK-LLM-OCR/server
+cd ~/Open-LLM-OCR/server
 ./scripts/download_ppocrv5_server_models.sh
 ```
 
@@ -110,7 +110,7 @@ cd ~/JK-LLM-OCR/server
 ### 1.5 启动 OCR 服务（前台运行）
 
 ```bash
-cd ~/JK-LLM-OCR/server
+cd ~/Open-LLM-OCR/server
 ./scripts/start_ppocrv5_server.sh
 ```
 
@@ -140,10 +140,10 @@ curl -sS http://127.0.0.1:50000/healthz
 把仓库里的模板复制过去（你可以先看一眼再复制）：
 
 ```bash
-sudo cp ~/JK-LLM-OCR/server/systemd/ppocrv5-http.service /etc/systemd/system/ppocrv5-http.service
+sudo cp ~/Open-LLM-OCR/server/systemd/ppocrv5-http.service /etc/systemd/system/ppocrv5-http.service
 ```
 
-如果你的安装目录不是 `~/JK-LLM-OCR`，就需要编辑 `ExecStart` / 模型路径为你的实际路径。
+如果你的安装目录不是 `~/Open-LLM-OCR`，就需要编辑 `ExecStart` / 模型路径为你的实际路径。
 
 ### 2.2 启用并启动
 
@@ -197,7 +197,7 @@ curl -m 3 -sS http://127.0.0.1:50000/healthz
 
 ## 4) Bob 插件配置（不改公网 IP）
 
-Bob 偏好设置 -> OCR -> `JK-LLM-OCR`：
+Bob 偏好设置 -> OCR -> `Open-LLM-OCR`：
 
 - `OCR 服务地址`：保持默认 `http://127.0.0.1:50000/ocr`
 

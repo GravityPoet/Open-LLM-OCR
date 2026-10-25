@@ -1,4 +1,4 @@
-# JK-LLM-OCR
+# Open-LLM-OCR
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
@@ -21,9 +21,9 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 
 | 安装包 | 用途 | 设置 |
 | --- | --- | --- |
-| [JK-LLM-OCR.bobplugin](JK-LLM-OCR.bobplugin) | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
-| [JK-LLM-OCR-Azure.bobplugin](JK-LLM-OCR-Azure.bobplugin) | 只用微软 | Endpoint、Key、总超时三个字段 |
-| [JK-LLM-OCR-Mistral.bobplugin](JK-LLM-OCR-Mistral.bobplugin) | 只用 Mistral | 接口地址、Key、模型、超时 |
+| [Open-LLM-OCR.bobplugin](Open-LLM-OCR.bobplugin) | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
+| [Open-LLM-OCR-Azure.bobplugin](Open-LLM-OCR-Azure.bobplugin) | 只用微软 | Endpoint、Key、总超时三个字段 |
+| [Open-LLM-OCR-Mistral.bobplugin](Open-LLM-OCR-Mistral.bobplugin) | 只用 Mistral | 接口地址、Key、模型、超时 |
 
 精简包是可选的独立服务入口；原版也能调用微软和 Mistral。Bob 第三方设置不支持动态折叠，因此原版将连接项靠前、高级项靠后，精简包只保留对应供应商字段。旧版服务无需删除；升级前保留原有地址、模型和密钥。
 

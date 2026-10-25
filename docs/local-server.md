@@ -16,8 +16,8 @@
 命令（示例）：
 
 ```bash
-git clone https://github.com/GravityPoet/JK-LLM-OCR.git
-cd JK-LLM-OCR/server
+git clone https://github.com/GravityPoet/Open-LLM-OCR.git
+cd Open-LLM-OCR/server
 
 python3 -m venv .venv
 source .venv/bin/activate
@@ -27,7 +27,7 @@ python -m pip install --upgrade pip
 预期现象：
 
 - `python -V` 能看到 `3.10+`
-- `which python` 指向 `.../JK-LLM-OCR/server/.venv/...`
+- `which python` 指向 `.../Open-LLM-OCR/server/.venv/...`
 
 ## 2) 安装依赖（已验证组合）
 
@@ -54,7 +54,7 @@ python -m pip install "paddleocr==3.4.0" "paddlex==3.4.1"
 命令：
 
 ```bash
-cd JK-LLM-OCR/server
+cd Open-LLM-OCR/server
 ./scripts/download_ppocrv5_server_models.sh
 ```
 
@@ -67,7 +67,7 @@ cd JK-LLM-OCR/server
 命令：
 
 ```bash
-cd JK-LLM-OCR/server
+cd Open-LLM-OCR/server
 ./scripts/start_ppocrv5_server.sh
 ```
 
@@ -88,7 +88,7 @@ curl -sS http://127.0.0.1:50000/healthz
 
 ## 5) Bob 插件配置
 
-- Bob 偏好设置 -> OCR -> 选择 `JK-LLM-OCR`
+- Bob 偏好设置 -> OCR -> 选择 `Open-LLM-OCR`
 - `OCR 后端模式`：`本地 PP-OCRv5_server`
 - `OCR 服务地址`：`http://127.0.0.1:50000/ocr`
 

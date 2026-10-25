@@ -2,12 +2,12 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "version": "0.3.0",
   "category": "ocr",
-  "name": "JK-LLM-OCR (Local + Cloud)",
+  "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、大模型与微软 Document Intelligence 图片识别。",
   "icon": "",
-  "author": "JK-LLM-OCR Contributors",
-  "homepage": "https://github.com/GravityPoet/JK-LLM-OCR",
-  "appcast": "https://raw.githubusercontent.com/GravityPoet/JK-LLM-OCR/main/appcast.json",
+  "author": "Open-LLM-OCR Contributors",
+  "homepage": "https://github.com/GravityPoet/Open-LLM-OCR",
+  "appcast": "https://raw.githubusercontent.com/GravityPoet/Open-LLM-OCR/main/appcast.json",
   "minBobVersion": "1.8.0",
   "options": [
     {
@@ -20,27 +20,27 @@
         {
           "title": "本地服务",
           "value": "local",
-          "defaultPluginName": "JK-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },
         {
           "title": "微软 Document Intelligence",
           "value": "azure",
-          "defaultPluginName": "JK-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },
         {
           "title": "Mistral OCR",
           "value": "mistral",
-          "defaultPluginName": "JK-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },
         {
           "title": "视觉大模型 API",
           "value": "providerCloud",
-          "defaultPluginName": "JK-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },
         {
           "title": "百度异步 OCR",
           "value": "cloudAsync",
-          "defaultPluginName": "JK-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         }
       ],
       "desc": "选择服务后填写对应连接信息；验证会识别内置图片。"

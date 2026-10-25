@@ -35,7 +35,7 @@ class SafeRedirect(HTTPRedirectHandler):
 
 def fetch_result(url: str, timeout: int) -> str:
     validate_target(url)
-    request = Request(url, headers={'User-Agent': 'JK-LLM-OCR-Relay/0.3', 'Accept': 'application/json,text/plain'})
+    request = Request(url, headers={'User-Agent': 'Open-LLM-OCR-Relay/0.3', 'Accept': 'application/json,text/plain'})
     with build_opener(SafeRedirect()).open(request, timeout=timeout) as response:
         raw = response.read(MAX_BYTES + 1)
         if len(raw) > MAX_BYTES:
@@ -43,7 +43,7 @@ def fetch_result(url: str, timeout: int) -> str:
         return raw.decode('utf-8')
 
 class RelayHandler(BaseHTTPRequestHandler):
-    server_version = 'JKLLMOCRRelay/0.3'
+    server_version = 'OpenLLMOCRRelay/0.3'
     def do_GET(self) -> None:
         parsed = urlsplit(self.path)
         if parsed.path == '/healthz':

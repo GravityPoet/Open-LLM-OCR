@@ -1,4 +1,4 @@
-# JK-LLM-OCR Server（PP-OCRv5 HTTP）
+# Open-LLM-OCR Server（PP-OCRv5 HTTP）
 
 这个目录提供插件配套的本地/远程 OCR HTTP 服务。
 

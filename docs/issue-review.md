@@ -2,7 +2,7 @@
 
 ## #1：默认端口不一致；更强的远程模型
 
-[原 issue](https://github.com/GravityPoet/JK-LLM-OCR/issues/1)
+[原 issue](https://github.com/GravityPoet/Open-LLM-OCR/issues/1)
 
 确认问题成立：旧插件、systemd 和部分教程使用 50000，Python/启动脚本默认 8080，导致照教程启动后插件无法连接。现在 Python、Shell、systemd、Docker、README 均统一 50000。已有 `PORT=8080` 等显式设置仍有效；不要无提示改动用户正在运行的服务。
 
@@ -12,7 +12,7 @@
 
 ## #2：Docker 部署示例
 
-[原 issue](https://github.com/GravityPoet/JK-LLM-OCR/issues/2)
+[原 issue](https://github.com/GravityPoet/Open-LLM-OCR/issues/2)
 
 有价值的贡献：明确列出了 Linux CPU 依赖、持久模型目录和部署方法。旧示例采用 host 网络与所有网卡监听，并需要手动对齐端口。仓库现提供 `server/Dockerfile`、`server/compose.yaml` 与 `docs/docker.md`，默认只映射宿主回环地址，模型只读挂载，具备 HTTP 健康检查。
 

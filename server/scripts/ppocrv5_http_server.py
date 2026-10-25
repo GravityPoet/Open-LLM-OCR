@@ -188,7 +188,7 @@ class ReusableThreadingHTTPServer(ThreadingHTTPServer):
 
 class OCRRequestHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
-    server_version = "JKLLMOCRServer/0.1.0"
+    server_version = "OpenLLMOCRServer/0.1.0"
 
     ocr_service: OCRService
     logger = logging.getLogger("ppocrv5_http_server")

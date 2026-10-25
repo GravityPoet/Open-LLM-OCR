@@ -46,7 +46,7 @@ curl -sS http://127.0.0.1:50123/healthz
 
 ## Bob 配置
 
-在 `JK-LLM-OCR` 的异步 jobs 模式中：
+在 `Open-LLM-OCR` 的异步 jobs 模式中：
 
 - `结果下载策略`：
   - `只走直连`：只测 Bob 运行时直连能力，不使用 relay

@@ -1,5 +1,5 @@
 [Unit]
-Description=PP-OCRv5 HTTP Server (JK-LLM-OCR)
+Description=PP-OCRv5 HTTP Server (Open-LLM-OCR)
 After=network.target
 StartLimitIntervalSec=120
 StartLimitBurst=3
@@ -10,14 +10,14 @@ Type=simple
 # IMPORTANT:
 # - Keep the server bound to 127.0.0.1 and access it via SSH tunnel.
 # - Update paths below to match your actual install directory.
-WorkingDirectory=/opt/jk-llm-ocr/server
+WorkingDirectory=/opt/open-llm-ocr/server
 
 Environment=HOST=127.0.0.1
 Environment=PORT=50000
 Environment=DEVICE=cpu
 Environment=PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
 
-ExecStart=/opt/jk-llm-ocr/server/scripts/start_ppocrv5_server.sh
+ExecStart=/opt/open-llm-ocr/server/scripts/start_ppocrv5_server.sh
 
 Restart=on-failure
 RestartForceExitStatus=SIGTERM

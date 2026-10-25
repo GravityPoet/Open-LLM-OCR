@@ -1,4 +1,4 @@
-# JK-LLM-OCR 发布流程
+# Open-LLM-OCR 发布流程
 
 此文件是仓库的发布步骤。普通提交与构建不创建 Release。
 
