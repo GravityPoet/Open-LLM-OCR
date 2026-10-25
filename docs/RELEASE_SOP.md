@@ -25,3 +25,4 @@
 | OpenDocRouter 图片/PDF MIME 混用 | 图片和 PDF 都使用 `image/*` 或图片请求携带页范围会被服务拒绝；页范围属于 Parse 请求体顶层 | 通过文件签名识别 PDF；PDF 使用 `application/pdf` 与顶层 `pages=1-N`，图片不发送 pages，并分别做回归 |
 | PDF 回归首次未启动 | `ReferenceError: Data is not defined` | 测试夹具使用了 Bob Data 替身但未从 helpers 导入 | 新增 Bob 原生对象夹具时同时检查 helpers 导出并先运行专用测试 |
 | 包凭据扫描误报 | 自定义正则把 `placeholderText: sk-xxxxxxxx...` 当成真实 Key | 误报来自示例占位符，包内没有真实凭据 | 扫描时允许固定占位符，并继续检查实际高熵凭据、用户配置和 work 文件未进入包 |
+| Bob 文件选择后版本未变化 | 选择 `.bobplugin` 后列表仍显示 0.3.0 | 文件选择流程没有完成升级，不能只凭对话框关闭判定安装成功 | 用 Bob 的“检查更新”读取 appcast；必须看到“更新成功”和插件列表 0.4.0，再逐文件比对安装目录 |
