@@ -83,6 +83,24 @@ test("OpenDocRouter preserves page markdown and page breaks", () => {
   assert.equal(items.map((x) => x.text).join("\n"), "One\n\nTwo");
 });
 
+test("OpenDocRouter removes generated Markdown heading markers from OCR fallback text", () => {
+  const p = load();
+  const items = p.module("special").openDocItems(
+    { pages: [{ markdown: "## 管理Notion笔记\n普通文字\n### 第二行" }] },
+    {},
+  );
+  assert.deepEqual(JSON.parse(JSON.stringify(items.map((x) => x.text))), ["管理Notion笔记", "普通文字", "第二行"]);
+});
+
+test("OpenDocRouter keeps hashes that are not Markdown headings", () => {
+  const p = load();
+  const items = p.module("special").openDocItems(
+    { pages: [{ markdown: "##NoSpace\n#123\n# 标题" }] },
+    {},
+  );
+  assert.deepEqual(JSON.parse(JSON.stringify(items.map((x) => x.text))), ["##NoSpace", "#123", "标题"]);
+});
+
 test("Roboflow and OpenDocRouter reject missing keys before transport", () => {
   for (const serviceMode of ["roboflow", "openDocRouter"]) {
     const q = query();

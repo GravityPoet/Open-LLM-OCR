@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -113,16 +113,6 @@
       "textConfig": {
         "type": "secure",
         "placeholderText": "Private API Key"
-      }
-    },
-    {
-      "identifier": "roboflowPrompt",
-      "type": "text",
-      "title": "② Roboflow · OCR 指令",
-      "defaultValue": "OCR",
-      "desc": "默认 OCR；可改为 Text Recognition 等任务提示。",
-      "textConfig": {
-        "type": "visible"
       }
     },
     {

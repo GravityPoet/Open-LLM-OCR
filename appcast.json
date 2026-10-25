@@ -2,12 +2,12 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
-      "version": "0.4.3",
-      "desc": "0.4.3：隐藏标准设置中的百度官方异步 OCR；服务顺序改为 OpenDocRouter、Roboflow、云端视觉模型/微软/Mistral、本地；保留旧配置兼容读取。",
-      "sha256": "d5864683ae10c1c4f4543c395ce35af5900cdbce3439df484d7c62f7bd683c0b",
-      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.3/Open-LLM-OCR.bobplugin",
+      "version": "0.4.4",
+      "desc": "0.4.4：修复 OpenDocRouter OCR 回退结果误带 Markdown 标题符号，普通截图文字不再凭空显示 ##；保留真实标题文字和复杂排版。",
+      "sha256": "4131e888c7c0d27e144d93e1ff6401713ff54dad175716363d7583ab812a10af",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.4/Open-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
-      "timestamp": 1792952322311
+      "timestamp": 1792953591469
     },
     {
       "version": "0.3.0",

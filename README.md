@@ -13,7 +13,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码与本机候选为 **0.4.3**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
+源码与本机候选为 **0.4.4**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 
@@ -24,7 +24,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 | `Open-LLM-OCR.bobplugin`               | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
 | `Open-LLM-OCR-Azure.bobplugin`         | 只用微软                   | Endpoint、Key、总超时三个字段     |
 | `Open-LLM-OCR-Mistral.bobplugin`       | 只用 Mistral               | 接口地址、Key、模型、超时         |
-| `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Endpoint、Private Key、OCR 指令   |
+| `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Endpoint、Private Key、输出上限、超时 |
 | `Open-LLM-OCR-OpenDocRouter.bobplugin` | 只用 OpenDocRouter OCR     | Endpoint、API Key、最大页数       |
 
 请从 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest) 的资产列表选择对应包。仓库根目录中的 `.bobplugin` 是开发构建产物，版本更新时会变化，不作为长期下载入口。
@@ -58,7 +58,7 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 
 ### Roboflow GLM-OCR
 
-选择“Roboflow GLM-OCR”，填写 `https://serverless.roboflow.com` 和 Private API Key。插件调用 `/infer/lmm`，固定 `model_id=glm-ocr`，图片使用 Base64，不上传到公开图床。
+选择“Roboflow GLM-OCR”，填写 `https://serverless.roboflow.com` 和 Private API Key。插件调用 `/infer/lmm`，固定 `model_id=glm-ocr` 和文字识别任务 `prompt=OCR`，无需选择任务模式或填写提示词；旧配置中的自定义任务提示也会忽略。图片使用 Base64，不上传到公开图床。
 
 ### OpenDocRouter OCR
 
