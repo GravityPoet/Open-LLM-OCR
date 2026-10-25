@@ -38,7 +38,7 @@
           "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },
         {
-          "title": "OpenDocRouter OCR 模型",
+          "title": "OpenDocRouter OCR",
           "value": "openDocRouter",
           "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
         },

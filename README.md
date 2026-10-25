@@ -1,6 +1,6 @@
 # Open-LLM-OCR
 
-Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、OpenDocRouter OCR 模型 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
+Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
 ## 0.4.0 更新
 
@@ -25,7 +25,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 | `Open-LLM-OCR-Azure.bobplugin`         | 只用微软                   | Endpoint、Key、总超时三个字段     |
 | `Open-LLM-OCR-Mistral.bobplugin`       | 只用 Mistral               | 接口地址、Key、模型、超时         |
 | `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Endpoint、Private Key、OCR 指令   |
-| `Open-LLM-OCR-OpenDocRouter.bobplugin` | 只用 OpenDocRouter OCR         | Endpoint、API Key、最大页数       |
+| `Open-LLM-OCR-OpenDocRouter.bobplugin` | 只用 OpenDocRouter OCR     | Endpoint、API Key、最大页数       |
 
 请从 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest) 的资产列表选择对应包。仓库根目录中的 `.bobplugin` 是开发构建产物，版本更新时会变化，不作为长期下载入口。
 
@@ -53,9 +53,9 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 
 选择“Roboflow GLM-OCR”，填写 `https://serverless.roboflow.com` 和 Private API Key。插件调用 `/infer/lmm`，固定 `model_id=glm-ocr`，图片使用 Base64，不上传到公开图床。
 
-### OpenDocRouter OCR 模型
+### OpenDocRouter OCR
 
-选择“OpenDocRouter OCR 模型”，填写 `https://www.opendocrouter.ai` 和 API Key。插件调用 `/v1/parse`，默认 `llamaindex/ocria-1`，可在设置中替换模型名称，使用 `mode=sync`、`cache=false`、`layout=false`，图片或 PDF 直接 Base64 发送。
+选择“OpenDocRouter OCR”，填写 `https://www.opendocrouter.ai` 和 API Key。插件调用 `/v1/parse`，默认 `llamaindex/ocria-1`，可在设置中替换模型名称，固定使用 `mode=sync`、`cache=false`、`layout=false`；图片直接 Base64 发送，PDF 使用 `application/pdf` 并按“最大页数”发送 `pages: "1-N"`。
 
 ### 视觉大模型
 
@@ -88,7 +88,7 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 
 ## English
 
-Version 0.4.0 adds native Azure Document Intelligence Read, Mistral OCR 4.1/latest, Roboflow GLM-OCR and OpenDocRouter OCR 模型, plus Chat, Responses, Gemini and Claude image requests. Existing plugin identity and saved option keys are preserved. Optional Azure and Mistral packages provide compact native settings without a companion application.
+Version 0.4.0 adds native Azure Document Intelligence Read, Mistral OCR 4.1/latest, Roboflow GLM-OCR and OpenDocRouter OCR, plus Chat, Responses, Gemini and Claude image requests. Existing plugin identity and saved option keys are preserved. Optional Azure and Mistral packages provide compact native settings without a companion application.
 
 Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 

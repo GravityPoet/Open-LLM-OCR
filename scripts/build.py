@@ -9,7 +9,7 @@ def archive(profile: str = "standard") -> bytes:
     if profile in ("azure", "mistral", "roboflow", "openDocRouter"):
         info['identifier'] += '.' + profile
         info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflow':'Roboflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
-        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','openDocRouter':'OpenDocRouter MinerU2.5-Pro'}.get(profile, info['summary'])
+        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
         info.pop('appcast', None)
         info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowPrompt','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
         for option in info['options']:

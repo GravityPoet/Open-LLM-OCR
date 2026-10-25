@@ -3,11 +3,11 @@
   "versions": [
     {
       "version": "0.4.0",
-      "desc": "新增 Roboflow GLM-OCR 与 OpenDocRouter OCR 模型 原生 OCR 适配，保留图片/PDF结构与分页；更新品牌与供应商配置。",
-      "sha256": "252d45de30a7f3d063fa80994b68f90f47ef3e5f5dd2e57babd1a71893252eb9",
+      "desc": "新增 Roboflow GLM-OCR 与 OpenDocRouter OCR（默认 ocria-1），支持图片/PDF 分页与同步无缓存请求；更新品牌与供应商配置。",
+      "sha256": "1a5a881dc60ead8a78b03c2d8c76125452e949e6c1de31bbe998ca9934f887f3",
       "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.0/Open-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
-      "timestamp": 1792905390621
+      "timestamp": 1792907245951
     },
     {
       "version": "0.3.0",
@@ -21,7 +21,7 @@
       "version": "0.2.9",
       "desc": "修正公开版默认值：百度异步 jobs 默认恢复为“直连失败回退 Relay”；保留显式下载策略菜单，本机已部署 relay 的用户仍可手动切到“只走 Relay”。",
       "sha256": "32c198fcf28d6836c40a6306133565da0f47dda1e226627edc6d7dddfc3abd72",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.9/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.9/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
       "timestamp": 1773192117076
     },
@@ -29,7 +29,7 @@
       "version": "0.2.8",
       "desc": "百度异步 jobs 新增显式结果下载策略；默认改为“只走 Relay”，避免在 Bob 运行时浪费时间尝试不稳定的 jsonUrl 直连。",
       "sha256": "c3173c221f836f0ab2bc9aed4c39394d3fcb147148ec377cc4c6bdabf6770c9a",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.8/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.8/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
       "timestamp": 1773192036366
     },
@@ -37,7 +37,7 @@
       "version": "0.2.7",
       "desc": "品牌：插件安装显示名统一为 Open-LLM-OCR (Local + Cloud)，不再随模式切换改变名称。",
       "sha256": "c48c860d3b4626cc477da7fb903537629c4e22f7cb2795236141751263b39e49",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.7/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.7/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
       "timestamp": 1773189583927
     },
@@ -45,7 +45,7 @@
       "version": "0.2.6",
       "desc": "简化：移除百度同步 /ocr 与 GLM-OCR；界面收敛为本地/云端服务商/百度异步三模式；补充百度异步 relay 文档与脚本。",
       "sha256": "d69c8b71a58ee56dc6528beabf63c2d39bab416a714077481c2b6e51329d73b7",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.6/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.6/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
       "timestamp": 1773177447324
     },
@@ -53,7 +53,7 @@
       "version": "0.2.3",
       "desc": "修复：OpenAI 兼容通道新增真实图片格式校验（PNG/JPG），并强化“请求云端 OCR 服务失败”报错信息。",
       "sha256": "db9b505e4264674c751f03b3416ec5254c24ff84b47cd7582baf3f3b91a41bd2",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.3/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.3/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771353601463
     },
@@ -61,7 +61,7 @@
       "version": "0.2.2",
       "desc": "修复：GLM-OCR 通道增加文件格式/大小前置校验（仅 PDF/JPG/PNG；图片<=10MB；PDF<=50MB），错误提示更清晰。",
       "sha256": "ea281e59763d0a1a89dc0ac4e978ed26657b4126c009114ee1c1a75c7e119795",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.2/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.2/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771352151901
     },
@@ -69,7 +69,7 @@
       "version": "0.2.1",
       "desc": "修复：新增智谱 GLM-OCR（layout_parsing）通道，解决调用 glm-ocr 时 HTTP 404；保留 OpenAI 兼容通道。",
       "sha256": "e6c29b808715a53b108c8f108ff2ad1ef1ca9bfed94fda7a916d3b9f295c8f9f",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.1/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.1/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771351719004
     },
@@ -77,7 +77,7 @@
       "version": "0.2.0",
       "desc": "新增：OCR 后端模式可切换本地/云端；支持 OpenAI 兼容多模态 OCR（含硅基流动 PaddleOCR-VL-1.5 配置）。",
       "sha256": "2f126acdd522896c89730a3f1fe3408303564f9626251bfec4b7320b9a1c19dd",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.2.0/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.2.0/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771349531514
     },
@@ -85,7 +85,7 @@
       "version": "0.1.8",
       "desc": "品牌：安装显示名改为 Open-LLM-OCR—GravityPoet开发；修正：移除 OCR 插件中误导性的“思考强度/输出模式”配置，保留 healthz 校验。",
       "sha256": "b28f3e40b3deae0d47da6579bc21587e0ec5a87b3af4d7f26cda000a383b0642",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.8/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.1.8/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771182297120
     },
@@ -93,7 +93,7 @@
       "version": "0.1.5",
       "desc": "去隐私：插件显示名统一为 Open-LLM-OCR；默认 OCR 地址改为 http://127.0.0.1:50000/ocr。",
       "sha256": "9e729662a789bd4ef86af736b63ede50db3af5aecb44ac849ca5879e6f122d40",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.5/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.1.5/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771150176038
     },
@@ -101,7 +101,7 @@
       "version": "0.1.4",
       "desc": "品牌：公开版插件名统一为 Open-LLM-OCR。",
       "sha256": "ca4fdf89e164f04b88e867d0302015b2827f9afbda1d4f4fa8265d3ceaacda23",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.4/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.1.4/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771130126528
     },
@@ -109,7 +109,7 @@
       "version": "0.1.3",
       "desc": "隐私：移除个人标识符；文档：新增 VPS/SSH 隧道新手教程；Server：补齐服务端脚本与 systemd 模板。",
       "sha256": "5cca6487c456f9f12ad910805e128bc6ae77a3288731f6a8899f2c5b61ce1a5d",
-      "url": "https://github.com/GravityPoet/JK-LLM-OCR/releases/download/v0.1.3/JK-LLM-OCR.bobplugin",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.1.3/JK-LLM-OCR.bobplugin",
       "minBobVersion": "1.6.0",
       "timestamp": 1771086217897
     }

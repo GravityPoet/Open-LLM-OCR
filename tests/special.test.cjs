@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { load, query, ok } = require("./helpers.cjs");
+const { Data, load, query, ok } = require("./helpers.cjs");
 
 test("Roboflow GLM-OCR sends the documented native LMM request", () => {
   const p = load({ serviceMode: "roboflow", roboflowApiKey: "fixture-key" });
@@ -51,6 +51,22 @@ test("OpenDocRouter sends sync, cache false, layout false and base64 document", 
   assert.equal(r.body.document.data, q.value.image.toBase64());
   assert.equal(r.body.document.mime_type, "image/png");
   assert.equal(r.body.pages, undefined);
+});
+
+test("OpenDocRouter sends PDF MIME and the configured page range", () => {
+  const p = load({
+    serviceMode: "openDocRouter",
+    openDocRouterApiKey: "fixture-key",
+    openDocRouterMaxPages: "12",
+  });
+  const q = query(
+    new Data(Buffer.from("%PDF-1.7\\nfixture", "utf8")),
+  );
+  p.ocr(q.value, q.done);
+  const r = p.requests[0];
+  assert.equal(r.body.document.mime_type, "application/pdf");
+  assert.equal(r.body.pages, "1-12");
+  assert.equal(r.body.document.pages, undefined);
 });
 
 test("OpenDocRouter preserves page markdown and page breaks", () => {
