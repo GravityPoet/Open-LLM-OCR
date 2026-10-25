@@ -13,7 +13,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码、仓库直装包和本机候选为 **0.3.0**；公开 Release 与自动更新源保持此前发布版本，正式发布后再更新。
+源码与本机候选为 **0.3.0**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 
@@ -21,9 +21,11 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 
 | 安装包 | 用途 | 设置 |
 | --- | --- | --- |
-| [Open-LLM-OCR.bobplugin](Open-LLM-OCR.bobplugin) | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
-| [Open-LLM-OCR-Azure.bobplugin](Open-LLM-OCR-Azure.bobplugin) | 只用微软 | Endpoint、Key、总超时三个字段 |
-| [Open-LLM-OCR-Mistral.bobplugin](Open-LLM-OCR-Mistral.bobplugin) | 只用 Mistral | 接口地址、Key、模型、超时 |
+| `Open-LLM-OCR.bobplugin` | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
+| `Open-LLM-OCR-Azure.bobplugin` | 只用微软 | Endpoint、Key、总超时三个字段 |
+| `Open-LLM-OCR-Mistral.bobplugin` | 只用 Mistral | 接口地址、Key、模型、超时 |
+
+请从 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest) 的资产列表选择对应包。仓库根目录中的 `.bobplugin` 是开发构建产物，版本更新时会变化，不作为长期下载入口。
 
 精简包是可选的独立服务入口；原版也能调用微软和 Mistral。Bob 第三方设置不支持动态折叠，因此原版将连接项靠前、高级项靠后，精简包只保留对应供应商字段。旧版服务无需删除；升级前保留原有地址、模型和密钥。
 
@@ -80,7 +82,7 @@ Version 0.3.0 adds native Azure Document Intelligence Read and Mistral OCR 4.1/l
 
 Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 
-Use the matching resource type and key for Azure; Computer Vision and Document Intelligence are not interchangeable. Cloud calls may incur provider charges. Mistral uses `/v1/ocr`, not Chat Completions. OCR in Bob completes once; it does not expose translation-style incremental rendering. The source/direct-install candidate is 0.3.0; the published release/update feed is changed only during an explicit release.
+Use the matching resource type and key for Azure; Computer Vision and Document Intelligence are not interchangeable. Cloud calls may incur provider charges. Mistral uses `/v1/ocr`, not Chat Completions. OCR in Bob completes once; it does not expose translation-style incremental rendering. Always install from the [latest GitHub Release](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest); root packages are development outputs, and Bob's appcast is updated with each public release.
 
 ## License
 

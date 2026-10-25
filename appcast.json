@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.3.0",
+      "desc": "Open-LLM-OCR 重做：加入 Azure Document Intelligence、Mistral OCR 4.1、视觉大模型多协议、PaddleOCR-VL 专用任务格式、结果完整性与本地服务安全改进；完成仓库品牌改名，保留原 Bob identifier。",
+      "sha256": "5a21824a3bea5ce3f061b3ca6fae7c1857043f6a0a32ae9188dd0b1f068f896a",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.3.0/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1792899071416
+    },
+    {
       "version": "0.2.9",
       "desc": "修正公开版默认值：百度异步 jobs 默认恢复为“直连失败回退 Relay”；保留显式下载策略菜单，本机已部署 relay 的用户仍可手动切到“只走 Relay”。",
       "sha256": "32c198fcf28d6836c40a6306133565da0f47dda1e226627edc6d7dddfc3abd72",
