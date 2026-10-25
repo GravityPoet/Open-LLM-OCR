@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -20,40 +20,40 @@
         {
           "title": "OpenDocRouter OCR",
           "value": "openDocRouter",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · OpenDocRouter"
         },
         {
           "title": "Roboflow GLM-OCR",
           "value": "roboflow",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · Roboflow"
         },
         {
           "title": "本地服务",
           "value": "local",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · 本地 OCR"
         },
         {
           "title": "微软 Document Intelligence",
           "value": "azure",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · Azure OCR"
         },
         {
           "title": "Mistral OCR",
           "value": "mistral",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · Mistral OCR"
         },
         {
           "title": "视觉大模型 API",
           "value": "providerCloud",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · 视觉模型"
         },
         {
           "title": "百度异步 OCR",
           "value": "cloudAsync",
-          "defaultPluginName": "Open-LLM-OCR (Local + Cloud)"
+          "defaultPluginName": "Open-LLM-OCR · 百度 OCR"
         }
       ],
-      "desc": "优先选择 OpenDocRouter 或 Roboflow；下面只需填写当前供应商对应的一组设置。"
+      "desc": "只调用当前选中的一个服务；服务名称会显示当前供应商。"
     },
     {
       "identifier": "openDocRouterBaseUrl",

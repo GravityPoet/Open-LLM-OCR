@@ -2,12 +2,12 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
-      "version": "0.4.1",
-      "desc": "0.4.1：整理 OCR 设置布局，OpenDocRouter 与 Roboflow 排在服务列表前两位；按供应商连续分组，保留全部配置键与精简包。",
-      "sha256": "8a79e8382bc07aa9188d0e5873a1342c29568eb4148b9fffffb2a13504686963",
-      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.1/Open-LLM-OCR.bobplugin",
+      "version": "0.4.2",
+      "desc": "0.4.2：服务名称随当前识别供应商动态显示；明确只调用选中的一项，保留 OpenDocRouter/Roboflow 优先布局与供应商分组。",
+      "sha256": "1b921937886f21b6c04f110fb67cff4e2238f6a385fc5addb59c7851be006321",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.2/Open-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
-      "timestamp": 1792947866211
+      "timestamp": 1792949906396
     },
     {
       "version": "0.3.0",

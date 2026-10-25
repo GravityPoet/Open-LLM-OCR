@@ -27,6 +27,9 @@
 - 本机无运行中的 Paddle 模型服务、无 Docker CLI；本次未部署远端服务。Docker/完整模型推理需在对应目标环境验收。
 
 
-## OCR 设置布局（0.4.1）
+## OCR 设置布局（0.4.2）
 
 Bob schema 没有条件显示或折叠组。标准 OCR 插件按供应商连续排序：OpenDocRouter、Roboflow、本地、微软/Mistral/视觉模型、百度；标题使用供应商编号帮助用户识别字段归属。精简包继续提供单供应商设置入口。
+
+
+当前服务名称使用 Bob `isKeyOption` 的动态名称映射，服务列表会显示 OpenDocRouter、Roboflow、本地、Azure、Mistral、视觉模型或百度；运行时只读取当前 `serviceMode` 对应的一组配置。
