@@ -2,12 +2,12 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
-      "version": "0.4.2",
-      "desc": "0.4.2：当前 OCR 服务名称随选择显示供应商提示名；用户手动自定义的服务名称保留；明确只调用当前选中的服务。",
-      "sha256": "ea031c794f5b21632baad6343ea41a8e31d9c7c4efd4a12c2e7b40e01f3896c4",
-      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.2/Open-LLM-OCR.bobplugin",
+      "version": "0.4.3",
+      "desc": "0.4.3：隐藏标准设置中的百度官方异步 OCR；服务顺序改为 OpenDocRouter、Roboflow、云端视觉模型/微软/Mistral、本地；保留旧配置兼容读取。",
+      "sha256": "d5864683ae10c1c4f4543c395ce35af5900cdbce3439df484d7c62f7bd683c0b",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.3/Open-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
-      "timestamp": 1792950187517
+      "timestamp": 1792952322311
     },
     {
       "version": "0.3.0",

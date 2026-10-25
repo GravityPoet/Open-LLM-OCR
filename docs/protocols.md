@@ -12,7 +12,7 @@
 | Claude | POST `/messages`，x-api-key，版本 2026-10-21 | end_turn / stop_sequence，忽略 thinking，截断报错 |
 | PaddleOCR-VL | Chat 兼容，图片在前，`OCR:` 在后，temperature=0 | 专用任务识别结果；普通模型不被强制设置采样参数 |
 | 本地 Paddle | POST `/ocr`，file Base64 | 有效 ocrResults / rec_texts |
-| 百度 jobs | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
+| 百度 jobs（旧配置兼容，标准设置已隐藏） | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
 | Roboflow GLM-OCR | POST `/infer/lmm`，Bearer Private Key，`model_id=glm-ocr`，Base64 image | 200 + `response` 文本；不保存公共图床 URL |
 | OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=false`，Base64 document | 200 + 每页状态和 markdown；sync 结果不请求缓存回读 |
 
