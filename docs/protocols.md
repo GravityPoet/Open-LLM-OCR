@@ -5,7 +5,7 @@
 | 服务 | 请求 | 完成条件 |
 | --- | --- | --- |
 | Azure Document Intelligence | POST `/documentintelligence/documentModels/prebuilt-read:analyze?api-version=2024-11-30`，`base64Source`，`Ocp-Apim-Subscription-Key` | 202 + 同源 Operation-Location；轮询到 succeeded；解析行和归一化坐标 |
-| Mistral OCR | POST `/v1/ocr`，Bearer，`document.type=image_url`，data URL，`include_blocks=true` | 200 + 有效 pages；优先结构块，旧返回回退 Markdown；表格不重复 |
+| Mistral OCR | POST `/v1/ocr`，Bearer，`document.type=image_url`，data URL，`include_blocks=true`，`table_format=markdown` | 200 + 有效 pages；优先结构块，旧返回回退 Markdown；表格统一为干净文本行，不把 HTML 标签传给 Bob |
 | OpenAI Chat | POST `/chat/completions`，Bearer，image_url | 正常 finish_reason + 可解析文字 |
 | OpenAI Responses | POST `/responses`，`store=false`，input_image | completed + 可解析文字 |
 | Gemini | POST `/models/{model}:generateContent`，inlineData；官方域名使用 x-goog-api-key | 正常候选，忽略 thought 部分 |
@@ -14,7 +14,7 @@
 | 本地 Paddle | POST `/ocr`，file Base64 | 有效 ocrResults / rec_texts |
 | 百度 jobs（旧配置兼容，标准设置已隐藏） | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
 | Roboflow GLM-OCR | POST `/infer/lmm`，Bearer Private Key，`model_id=glm-ocr`，Base64 image | 200 + `response` 文本；不保存公共图床 URL |
-| OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=false`，Base64 document | 200 + 每页状态和 markdown；sync 结果不请求缓存回读 |
+| OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=false`，Base64 document | 200 仍需检查整体 `status` 和 `pages[].status`；页级 `error.code/message` 原样归纳后返回，不把失败页当成空 OCR |
 
 Mistral 最新稳定 OCR 为 4.1；latest 可随官方更新，固定版本用于复现。插件请求 inline Markdown 表格，关闭图片 Base64 回传以缩小响应。不调用批处理、上传持久文件或生成额外批量任务。
 

@@ -17,6 +17,7 @@ test("Mistral latest calls native OCR endpoint without chat or sampling fields",
   assert.ok(r.body.document.image_url.startsWith("data:image/png;base64,"));
   assert.equal(r.body.include_image_base64, false);
   assert.equal(r.body.include_blocks, true);
+  assert.equal(r.body.table_format, "markdown");
   assert.equal(r.body.temperature, undefined);
 });
 test("Mistral fixed model 4.1 and custom model remain explicit", () => {
@@ -76,6 +77,34 @@ test("Mistral fallback preserves all pages, tables and blank lines", () => {
       ],
     });
   assert.equal(items.map((t) => t.text).join("\n"), "First\n\n| A |\n\nSecond");
+});
+
+test("Mistral HTML tables become clean tab-separated OCR lines", () => {
+  const p = load();
+  const items = p.module("mistral").parse({
+    pages: [{
+      index: 0,
+      markdown: "<table><tr><td>2026-10-07</td><td>$0.00</td></tr><tr><td>2026-10-22</td><td>$0.97</td></tr></table>",
+    }],
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(items.map((item) => item.text))), [
+    "2026-10-07\t$0.00",
+    "2026-10-22\t$0.97",
+  ]);
+});
+
+test("Mistral Markdown tables become clean tab-separated OCR lines", () => {
+  const p = load();
+  const items = p.module("mistral").parse({
+    pages: [{
+      index: 0,
+      markdown: "| 日期 | 金额 |\n| --- | ---: |\n| 2026-10-07 | $0.00 |",
+    }],
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(items.map((item) => item.text))), [
+    "日期\t金额",
+    "2026-10-07\t$0.00",
+  ]);
 });
 test("Mistral rejects malformed page and block without silently dropping text", () => {
   const p = load();

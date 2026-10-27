@@ -11,13 +11,17 @@ def archive(profile: str = "standard") -> bytes:
         info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflow':'Roboflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
         info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
         info.pop('appcast', None)
-        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowPrompt','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
+        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
         for option in info['options']:
             if option['identifier'] == 'cloudBaseUrl':
-                option.update(title='Azure Endpoint' if profile == 'azure' else 'Mistral Endpoint', defaultValue='' if profile == 'azure' else 'https://api.mistral.ai/v1', desc='当前服务的接口地址。')
-                option['textConfig'] = {'type': 'visible', 'placeholderText': 'https://example.cognitiveservices.azure.com/' if profile == 'azure' else 'https://api.mistral.ai/v1'}
+                option.update(title='Azure Endpoint' if profile == 'azure' else 'Mistral Endpoint', defaultValue=option['defaultValue'] if profile == 'azure' else 'https://api.mistral.ai/v1', desc='当前服务的接口地址。')
+                option['textConfig'] = {'type': 'visible', 'placeholderText': option['defaultValue']}
             if option['identifier'] == 'cloudApiKey':
                 option.update(title='API Key', desc='填写当前服务的 API Key。')
+                if profile == 'mistral': option['textConfig'] = {'type': 'secure', 'placeholderText': 'Mistral API Key'}
+            if profile == 'mistral' and option['identifier'] == 'cloudModel':
+                option.update(title='自定义 Mistral 模型', defaultValue='', desc='仅选择“自定义”时填写 Mistral 模型 ID。')
+                option['textConfig'] = {'type': 'visible', 'placeholderText': 'Mistral 自定义模型 ID'}
             if profile == 'roboflow' and option['identifier'] == 'roboflowBaseUrl':
                 option.update(title='Roboflow Endpoint', desc='固定使用 /infer/lmm。')
             if profile == 'openDocRouter' and option['identifier'] == 'openDocRouterBaseUrl':

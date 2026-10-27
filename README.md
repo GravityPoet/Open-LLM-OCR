@@ -2,6 +2,13 @@
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
+## 0.4.6 修复
+
+- OpenDocRouter 返回 HTTP 200 但页面失败时，透传页级错误（例如 `provider_error: invalid x-api-key`），不再误报“未识别到文字”。
+- 保留已成功的模型路径；如果单个上游模型故障，可直接切换模型，不需要更换 OpenDocRouter Key。
+- 云端 OCR 默认供应商改为微软 Document Intelligence，默认 Endpoint 使用备用 Azure 资源，模型固定为 `prebuilt-read`。
+- Mistral 和视觉模型返回的 HTML 表格转换为制表符文本，避免 `<table>`、`<tr>`、`<td>` 等标签污染 OCR 结果。
+
 ## 0.4.0 更新
 
 - **微软 OCR**：Document Intelligence `prebuilt-read`，API `2024-11-30`。同一资源的 Endpoint 与一把 Key 即可；自动轮询并保留文字坐标。
@@ -13,7 +20,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码与本机候选为 **0.4.4**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
+源码与本机候选为 **0.4.6**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 

@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.4",
+  "version": "0.4.6",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -14,7 +14,7 @@
       "identifier": "serviceMode",
       "type": "menu",
       "title": "识别服务（先选供应商）",
-      "defaultValue": "local",
+      "defaultValue": "azure",
       "isKeyOption": true,
       "menuValues": [
         {
@@ -129,11 +129,11 @@
       "identifier": "cloudBaseUrl",
       "type": "text",
       "title": "③ 云端视觉模型 / 微软 · 接口地址",
-      "defaultValue": "https://api.siliconflow.cn/v1",
-      "desc": "大模型 API 或 Azure 资源 Endpoint；完整接口地址优先。",
+      "defaultValue": "https://msft01.cognitiveservices.azure.com/",
+      "desc": "默认保留微软备用地址；选“微软 Document Intelligence”使用。视觉模型请填写对应服务地址。",
       "textConfig": {
         "type": "visible",
-        "placeholderText": "https://api.siliconflow.cn/v1"
+        "placeholderText": "https://msft01.cognitiveservices.azure.com/"
       }
     },
     {
@@ -144,18 +144,18 @@
       "desc": "大模型与微软服务使用；填写一把对应资源的 Key 即可。",
       "textConfig": {
         "type": "secure",
-        "placeholderText": "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+        "placeholderText": "Azure 资源 Key（KEY1 或 KEY2）"
       }
     },
     {
       "identifier": "cloudModel",
       "type": "text",
-      "title": "③ 视觉模型 · 模型名称",
-      "defaultValue": "PaddlePaddle/PaddleOCR-VL-1.5",
-      "desc": "仅视觉大模型使用；微软自动使用 prebuilt-read。",
+      "title": "③ 云端视觉模型 / 微软 · 模型名称",
+      "defaultValue": "prebuilt-read",
+      "desc": "微软固定使用 prebuilt-read；使用视觉模型时填写对应模型名称。",
       "textConfig": {
         "type": "visible",
-        "placeholderText": "PaddlePaddle/PaddleOCR-VL-1.5"
+        "placeholderText": "prebuilt-read"
       }
     },
     {

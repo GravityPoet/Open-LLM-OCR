@@ -101,6 +101,39 @@ test("OpenDocRouter keeps hashes that are not Markdown headings", () => {
   assert.deepEqual(JSON.parse(JSON.stringify(items.map((x) => x.text))), ["##NoSpace", "#123", "标题"]);
 });
 
+test("OpenDocRouter exposes page-level provider failures instead of reporting empty OCR", () => {
+  const p = load();
+  assert.throws(
+    () => p.module("special").openDocFailure({
+      status: "failed",
+      pages: [
+        {
+          page: 1,
+          status: "error",
+          error: { code: "provider_error", message: "invalid x-api-key" },
+        },
+      ],
+    }),
+    /OpenDocRouter 识别失败（第 1 页）：provider_error: invalid x-api-key/,
+  );
+});
+
+test("OpenDocRouter accepts completed and partial page responses", () => {
+  const p = load();
+  assert.doesNotThrow(() =>
+    p.module("special").openDocFailure({
+      status: "completed",
+      pages: [{ page: 1, status: "ok", markdown: "OCR" }],
+    }),
+  );
+  assert.doesNotThrow(() =>
+    p.module("special").openDocFailure({
+      status: "partial",
+      pages: [{ page: 1, status: "ok", markdown: "OCR" }],
+    }),
+  );
+});
+
 test("Roboflow and OpenDocRouter reject missing keys before transport", () => {
   for (const serviceMode of ["roboflow", "openDocRouter"]) {
     const q = query();

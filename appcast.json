@@ -2,6 +2,22 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.4.6",
+      "desc": "0.4.6：默认云端 OCR 改为微软 Document Intelligence；Mistral/视觉模型 HTML 表格转为干净文本；OpenDocRouter 页级错误透传。",
+      "sha256": "3dc76ad8d98c3075939c17c5c1859aa900b1ac073d21836c1ef366957cbe3571",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.6/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793121399987
+    },
+    {
+      "version": "0.4.5",
+      "desc": "0.4.5：OpenDocRouter 页面失败时透传 provider_error 等上游错误，不再误报未识别到文字；保留成功模型路径。",
+      "sha256": "701970f24714919f8511eb38e212c454edc20afb3e5dcc8b853015d5c51f7d0f",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.5/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1792972800000
+    },
+    {
       "version": "0.4.4",
       "desc": "0.4.4：修复 OpenDocRouter OCR 回退结果误带 Markdown 标题符号，普通截图文字不再凭空显示 ##；保留真实标题文字和复杂排版。",
       "sha256": "4131e888c7c0d27e144d93e1ff6401713ff54dad175716363d7583ab812a10af",
