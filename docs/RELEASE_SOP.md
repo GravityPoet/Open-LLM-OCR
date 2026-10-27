@@ -26,3 +26,9 @@
 | PDF 回归首次未启动 | `ReferenceError: Data is not defined` | 测试夹具使用了 Bob Data 替身但未从 helpers 导入 | 新增 Bob 原生对象夹具时同时检查 helpers 导出并先运行专用测试 |
 | 包凭据扫描误报 | 自定义正则把 `placeholderText: sk-xxxxxxxx...` 当成真实 Key | 误报来自示例占位符，包内没有真实凭据 | 扫描时允许固定占位符，并继续检查实际高熵凭据、用户配置和 work 文件未进入包 |
 | Bob 文件选择后版本未变化 | 选择 `.bobplugin` 后列表仍显示 0.3.0 | 文件选择流程没有完成升级，不能只凭对话框关闭判定安装成功 | 用 Bob 的“检查更新”读取 appcast；必须看到“更新成功”和插件列表 0.4.0，再逐文件比对安装目录 |
+
+## 0.4.6 发布记录
+
+- 候选提交：`0201fe6c787b6fdac2e9d072f798022296405285`；tag：`v0.4.6`。
+- 首次 `gh release create ... --draft` 返回临时 `untagged-*` 页面地址，这是 GitHub 草稿资产的正常中间状态；发布后已用 `gh release view v0.4.6` 回读正式 tag 地址、`draft=false`、`prerelease=false`、目标提交和六个资产。
+- 五个包 SHA 与发布资产 digest 已逐一核对；`appcast.json` 顶部版本为 0.4.6，更新源中的标准包 SHA 与正式资产一致。
