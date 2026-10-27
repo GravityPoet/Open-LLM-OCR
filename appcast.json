@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.4.7",
+      "desc": "0.4.7：新增可配置 Roboflow Workflow；支持独立 Endpoint、API Key、Base64/URL 输入和输出字段路径；保留 GLM-OCR。",
+      "sha256": "d22d9533c133554ac570bd4ad227797ca1bfa730ddbc4ef6a39c3ed337283765",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.7/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793130085587
+    },
+    {
       "version": "0.4.6",
       "desc": "0.4.6：默认云端 OCR 改为微软 Document Intelligence；Mistral/视觉模型 HTML 表格转为干净文本；OpenDocRouter 页级错误透传。",
       "sha256": "3dc76ad8d98c3075939c17c5c1859aa900b1ac073d21836c1ef366957cbe3571",

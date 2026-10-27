@@ -6,7 +6,7 @@
 2. `npm run build`，再 `npm run verify` 与 macOS `swift tests/jscore-smoke.swift .`。保留真实业务验证的范围与用户明确豁免的验收项。
 3. 记录候选 commit、源码指纹和五种 `.bobplugin` 包的 SHA256，检查包中无凭据、配置、work 文件。
 4. 执行获授权的本机安装，逐文件比对安装内容；保留原有服务配置及恢复包。测试生成或改变候选时重建受影响产物。
-5. 获授权发布时创建 `v<version>` annotated tag 和 Release，上传标准、Azure、Mistral、Roboflow、OpenDocRouter 五个包及 SHA256 清单，下载后核对字节。
+5. 获授权发布时创建 `v<version>` annotated tag 和 Release，上传标准、Azure、Mistral、Roboflow、Roboflow Workflow、OpenDocRouter 六个包及 SHA256 清单，下载后核对字节。
 6. 公开下载确认成功后更新标准 `appcast.json` 的顶部版本、URL、SHA、identifier 和毫秒时间戳。精简包当前手动更新。
 7. 回读远端 SHA、CI、Release latest/draft/prerelease 和更新源。已发布 tag 不移动，不覆盖旧资产来发布不同内容。
 
@@ -32,3 +32,10 @@
 - 候选提交：`0201fe6c787b6fdac2e9d072f798022296405285`；tag：`v0.4.6`。
 - 首次 `gh release create ... --draft` 返回临时 `untagged-*` 页面地址，这是 GitHub 草稿资产的正常中间状态；发布后已用 `gh release view v0.4.6` 回读正式 tag 地址、`draft=false`、`prerelease=false`、目标提交和六个资产。
 - 五个包 SHA 与发布资产 digest 已逐一核对；`appcast.json` 顶部版本为 0.4.6，更新源中的标准包 SHA 与正式资产一致。
+
+## 0.4.7 发布记录
+
+- 新增独立 `Roboflow Workflow（自定义）` 服务和精简包 `Open-LLM-OCR-Roboflow-Workflow.bobplugin`。
+- Workflow 设置由 Bob 原生表单提供：Workspace、Workflow ID、Private API Key、Base64/URL 输入、URL 模式图片地址和可选输出字段路径。
+- 运行请求使用 `POST https://serverless.roboflow.com/<workspace>/workflows/<workflow-id>`，请求体包含 `api_key` 与 `inputs.image`；没有内置或提交密钥。
+- 验证：70 个 Node 测试、10 个 Python 测试、JavaScriptCore 9 项通过；未发送真实 Roboflow 请求。

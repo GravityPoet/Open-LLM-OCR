@@ -11,3 +11,7 @@ __pycache__/
 
 # Local evidence (may reference private configuration)
 work/
+
+# Local secrets
+.env
+.env.*

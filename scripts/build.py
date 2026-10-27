@@ -6,12 +6,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def archive(profile: str = "standard") -> bytes:
     info = json.loads((ROOT / 'info.json').read_bytes())
-    if profile in ("azure", "mistral", "roboflow", "openDocRouter"):
+    if profile in ("azure", "mistral", "roboflow", "roboflowWorkflow", "openDocRouter"):
         info['identifier'] += '.' + profile
-        info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflow':'Roboflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
-        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
+        info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflow':'Roboflow OCR','roboflowWorkflow':'Roboflow Workflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
+        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','roboflowWorkflow':'Roboflow 自定义 Workflow OCR','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
         info.pop('appcast', None)
-        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
+        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('roboflowWorkflowWorkspace','roboflowWorkflowId','roboflowWorkflowApiKey','roboflowWorkflowInputType','roboflowWorkflowImageUrl','roboflowWorkflowOutputPath','requestTimeoutSec') if profile == 'roboflowWorkflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
         for option in info['options']:
             if option['identifier'] == 'cloudBaseUrl':
                 option.update(title='Azure Endpoint' if profile == 'azure' else 'Mistral Endpoint', defaultValue=option['defaultValue'] if profile == 'azure' else 'https://api.mistral.ai/v1', desc='当前服务的接口地址。')
@@ -24,6 +24,8 @@ def archive(profile: str = "standard") -> bytes:
                 option['textConfig'] = {'type': 'visible', 'placeholderText': 'Mistral 自定义模型 ID'}
             if profile == 'roboflow' and option['identifier'] == 'roboflowBaseUrl':
                 option.update(title='Roboflow Endpoint', desc='固定使用 /infer/lmm。')
+            if profile == 'roboflowWorkflow' and option['identifier'] == 'roboflowWorkflowWorkspace':
+                option.update(title='Roboflow Workflow Workspace', desc='Roboflow 工作区名称。')
             if profile == 'openDocRouter' and option['identifier'] == 'openDocRouterBaseUrl':
                 option.update(title='OpenDocRouter Endpoint', desc='固定使用 /v1/parse。')
     buf = io.BytesIO()
@@ -39,7 +41,7 @@ def archive(profile: str = "standard") -> bytes:
 
 def main() -> None:
     parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args()
-    for profile,name in (('standard','Open-LLM-OCR.bobplugin'),('azure','Open-LLM-OCR-Azure.bobplugin'),('mistral','Open-LLM-OCR-Mistral.bobplugin'),('roboflow','Open-LLM-OCR-Roboflow.bobplugin'),('openDocRouter','Open-LLM-OCR-OpenDocRouter.bobplugin')):
+    for profile,name in (('standard','Open-LLM-OCR.bobplugin'),('azure','Open-LLM-OCR-Azure.bobplugin'),('mistral','Open-LLM-OCR-Mistral.bobplugin'),('roboflow','Open-LLM-OCR-Roboflow.bobplugin'),('roboflowWorkflow','Open-LLM-OCR-Roboflow-Workflow.bobplugin'),('openDocRouter','Open-LLM-OCR-OpenDocRouter.bobplugin')):
         p=ROOT/name;data=archive(profile)
         if args.check:
             if not p.is_file() or p.read_bytes()!=data: raise SystemExit('Archive does not match source: '+name)

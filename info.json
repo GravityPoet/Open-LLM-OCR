@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -26,6 +26,11 @@
           "title": "Roboflow GLM-OCR",
           "value": "roboflow",
           "defaultPluginName": "Open-LLM-OCR · Roboflow"
+        },
+        {
+          "title": "Roboflow Workflow（自定义）",
+          "value": "roboflowWorkflow",
+          "defaultPluginName": "Open-LLM-OCR · Roboflow Workflow"
         },
         {
           "title": "视觉大模型 API",
@@ -123,6 +128,78 @@
       "desc": "64–8192；文字越多消耗越高。",
       "textConfig": {
         "type": "visible"
+      }
+    },
+    {
+      "identifier": "roboflowWorkflowWorkspace",
+      "type": "text",
+      "title": "② Roboflow Workflow · Workspace",
+      "defaultValue": "ashers-workspace-u0hh3",
+      "desc": "Roboflow 工作区名称；通常不需要修改。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "ashers-workspace-u0hh3"
+      }
+    },
+    {
+      "identifier": "roboflowWorkflowId",
+      "type": "text",
+      "title": "② Roboflow Workflow · 模型/Workflow 名称",
+      "defaultValue": "claude-haiku-5-5-ocr",
+      "desc": "填写你在 Roboflow 部署的 Workflow ID；插件会自动拼接 Endpoint。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "claude-haiku-5-5-ocr"
+      }
+    },
+    {
+      "identifier": "roboflowWorkflowApiKey",
+      "type": "text",
+      "title": "② Roboflow Workflow · API Key",
+      "defaultValue": "",
+      "desc": "发送到请求体的 api_key；使用 Roboflow Private API Key，按 Workflow 额度计费。",
+      "textConfig": {
+        "type": "secure",
+        "placeholderText": "Private API Key"
+      }
+    },
+    {
+      "identifier": "roboflowWorkflowInputType",
+      "type": "menu",
+      "title": "② Roboflow Workflow · 输入方式（Base64 / URL）",
+      "defaultValue": "base64",
+      "menuValues": [
+        {
+          "title": "Base64（当前截图，推荐）",
+          "value": "base64"
+        },
+        {
+          "title": "URL（填写下方图片地址）",
+          "value": "url"
+        }
+      ],
+      "desc": "Workflow 输入 schema 的 image.type；Base64 不需要公开图片地址。"
+    },
+    {
+      "identifier": "roboflowWorkflowImageUrl",
+      "type": "text",
+      "title": "② Roboflow Workflow · 图片 URL（仅 URL 模式）",
+      "defaultValue": "",
+      "desc": "仅选择 URL 输入时使用；必须是 https 图片地址。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "https://example.com/image.png"
+      }
+    },
+    {
+      "identifier": "roboflowWorkflowOutputPath",
+      "type": "text",
+      "title": "② Roboflow Workflow · 输出字段路径（高级，可留空）",
+      "defaultValue": "",
+      "desc": "可选，例如 outputs[0].text；留空自动从 text、output、result、response 等字段提取。",
+      "textConfig": {
+        "type": "visible",
+        "placeholderText": "outputs[0].text"
       }
     },
     {

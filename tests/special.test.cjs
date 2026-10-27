@@ -34,6 +34,56 @@ test("Roboflow response text becomes Bob OCR lines", () => {
   );
 });
 
+test("Roboflow Workflow sends api_key in the body and supports Base64 input", () => {
+  const p = load({
+    serviceMode: "roboflowWorkflow",
+    roboflowWorkflowApiKey: "workflow-key",
+    roboflowWorkflowWorkspace: "ashers-workspace-u0hh3",
+    roboflowWorkflowId: "claude-haiku-5-5-ocr",
+    roboflowWorkflowInputType: "base64",
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  const r = p.requests[0];
+  assert.equal(r.url, "https://serverless.roboflow.com/ashers-workspace-u0hh3/workflows/claude-haiku-5-5-ocr");
+  assert.equal(r.header.Authorization, undefined);
+  assert.deepEqual(JSON.parse(JSON.stringify(r.body)), {
+    api_key: "workflow-key",
+    inputs: { image: { type: "base64", value: q.value.image.toBase64() } },
+  });
+});
+
+test("Roboflow Workflow supports URL input and explicit output paths", () => {
+  const p = load({
+    serviceMode: "roboflowWorkflow",
+    roboflowWorkflowApiKey: "workflow-key",
+    roboflowWorkflowInputType: "url",
+    roboflowWorkflowImageUrl: "https://example.com/sample.png",
+    roboflowWorkflowOutputPath: "outputs[0].text",
+  }, {
+    request(r) {
+      r.handler(ok({ outputs: [{ text: "First line\nSecond line" }] }));
+    },
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.deepEqual(Array.from(q.completions[0].result.texts, (x) => x.text), ["First line", "Second line"]);
+  assert.equal(p.requests[0].body.inputs.image.value, "https://example.com/sample.png");
+});
+
+test("Roboflow Workflow rejects URL mode without an HTTPS image URL", () => {
+  const p = load({
+    serviceMode: "roboflowWorkflow",
+    roboflowWorkflowApiKey: "workflow-key",
+    roboflowWorkflowInputType: "url",
+    roboflowWorkflowImageUrl: "http://example.com/sample.png",
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.equal(p.requests.length, 0);
+  assert.match(q.completions[0].error.message, /https 图片地址/);
+});
+
 test("OpenDocRouter sends sync, cache false, layout false and base64 document", () => {
   const p = load({
     serviceMode: "openDocRouter",

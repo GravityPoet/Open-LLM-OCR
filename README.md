@@ -1,6 +1,15 @@
 # Open-LLM-OCR
 
-Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
+Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、Roboflow Workflow、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
+
+## 0.4.7 Roboflow Workflow
+
+- 新增独立的“Roboflow Workflow（自定义）”服务项，保留原有 GLM-OCR 服务项。
+- 在 Bob 设置中填写 Workspace、Workflow/模型名称和 Private API Key；插件自动拼接 Workflow Endpoint。
+- 输入方式默认 Base64，直接发送当前截图；URL 模式只有在 Workflow 要求公网图片地址时才使用。
+- 图片 URL 只在 URL 模式使用；输出字段路径是高级可选项，留空会自动提取常见文字字段。
+- API Key、Workflow 名称和其他参数都由用户自己在 Bob 设置中填写，插件不内置密钥。
+- 独立调用示例：`ROBOFLOW_API_KEY=... python3 scripts/roboflow-workflow-example.py 图片路径`；示例只从环境变量读 Key。
 
 ## 0.4.6 修复
 
@@ -20,7 +29,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码与本机候选为 **0.4.6**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
+源码与本机候选为 **0.4.7**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 
@@ -32,6 +41,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 | `Open-LLM-OCR-Azure.bobplugin`         | 只用微软                   | Endpoint、Key、总超时三个字段     |
 | `Open-LLM-OCR-Mistral.bobplugin`       | 只用 Mistral               | 接口地址、Key、模型、超时         |
 | `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Endpoint、Private Key、输出上限、超时 |
+| `Open-LLM-OCR-Roboflow-Workflow.bobplugin` | 只用 Roboflow Workflow | Workspace、Workflow 名称、Private Key、输入方式 |
 | `Open-LLM-OCR-OpenDocRouter.bobplugin` | 只用 OpenDocRouter OCR     | Endpoint、API Key、最大页数       |
 
 请从 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest) 的资产列表选择对应包。仓库根目录中的 `.bobplugin` 是开发构建产物，版本更新时会变化，不作为长期下载入口。
@@ -66,6 +76,19 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 ### Roboflow GLM-OCR
 
 选择“Roboflow GLM-OCR”，填写 `https://serverless.roboflow.com` 和 Private API Key。插件调用 `/infer/lmm`，固定 `model_id=glm-ocr` 和文字识别任务 `prompt=OCR`，无需选择任务模式或填写提示词；旧配置中的自定义任务提示也会忽略。图片使用 Base64，不上传到公开图床。
+
+选择“Roboflow Workflow（自定义）”后，通常只需要填写：
+
+```text
+Workspace：ashers-workspace-u0hh3
+模型/Workflow 名称：claude-haiku-5-5-ocr
+API Key：你的 Roboflow Private API Key
+图片输入：Base64
+图片 URL：留空
+输出字段路径：留空
+```
+
+插件会自动调用：`https://serverless.roboflow.com/<Workspace>/workflows/<Workflow 名称>`，并发送 `{ api_key, inputs: { image: { type, value } } }`。
 
 ### OpenDocRouter OCR
 
@@ -102,7 +125,7 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 
 ## English
 
-Version 0.4.0 adds native Azure Document Intelligence Read, Mistral OCR 4.1/latest, Roboflow GLM-OCR and OpenDocRouter OCR, plus Chat, Responses, Gemini and Claude image requests. Existing plugin identity and saved option keys are preserved. Optional Azure and Mistral packages provide compact native settings without a companion application.
+Version 0.4.7 adds a configurable Roboflow Workflow adapter while preserving the existing GLM-OCR adapter. Workspace, Workflow ID, Private API Key, image input mode and optional output path are configured in Bob's native settings; no key is bundled.
 
 Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 
