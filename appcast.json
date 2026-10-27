@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.4.8",
+      "desc": "0.4.8：精简 Roboflow Workflow 设置；自动根据图片 URL选择 URL 或 Base64，移除不常用的输入方式与输出路径选项。",
+      "sha256": "10a6a71e0e505d47a7e6cf764afd8ec95a93ad57fdb025d1e448bacc9b6735d7",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.8/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793130974614
+    },
+    {
       "version": "0.4.7",
       "desc": "0.4.7：新增可配置 Roboflow Workflow；支持独立 Endpoint、API Key、Base64/URL 输入和输出字段路径；保留 GLM-OCR。",
       "sha256": "d22d9533c133554ac570bd4ad227797ca1bfa730ddbc4ef6a39c3ed337283765",

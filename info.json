@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -164,42 +164,14 @@
       }
     },
     {
-      "identifier": "roboflowWorkflowInputType",
-      "type": "menu",
-      "title": "② Roboflow Workflow · 输入方式（Base64 / URL）",
-      "defaultValue": "base64",
-      "menuValues": [
-        {
-          "title": "Base64（当前截图，推荐）",
-          "value": "base64"
-        },
-        {
-          "title": "URL（填写下方图片地址）",
-          "value": "url"
-        }
-      ],
-      "desc": "Workflow 输入 schema 的 image.type；Base64 不需要公开图片地址。"
-    },
-    {
       "identifier": "roboflowWorkflowImageUrl",
       "type": "text",
-      "title": "② Roboflow Workflow · 图片 URL（仅 URL 模式）",
+      "title": "② Roboflow Workflow · 图片 URL（可选）",
       "defaultValue": "",
-      "desc": "仅选择 URL 输入时使用；必须是 https 图片地址。",
+      "desc": "填写后自动使用 URL；留空则自动把当前截图作为 Base64 发送。必须是 https 图片地址。",
       "textConfig": {
         "type": "visible",
         "placeholderText": "https://example.com/image.png"
-      }
-    },
-    {
-      "identifier": "roboflowWorkflowOutputPath",
-      "type": "text",
-      "title": "② Roboflow Workflow · 输出字段路径（高级，可留空）",
-      "defaultValue": "",
-      "desc": "可选，例如 outputs[0].text；留空自动从 text、output、result、response 等字段提取。",
-      "textConfig": {
-        "type": "visible",
-        "placeholderText": "outputs[0].text"
       }
     },
     {

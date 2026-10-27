@@ -4,7 +4,7 @@
 
 `azure.js`、`mistral.js`、`cloud.js`、`baidu.js` 分别实现协议；`special.js` 同时提供 Roboflow GLM-OCR 和可配置 Workflow 适配器；`result.js` 负责阅读顺序、空白保留、归一化坐标与结果上限。达到上限返回明确错误，不以截断正文冒充完整结果。普通调用只加载所选适配器。
 
-Roboflow Workflow 通过 Bob 设置读取 Workspace、Workflow ID、API Key、输入方式、URL 和可选输出字段路径；运行时自动拼接 `https://serverless.roboflow.com/<workspace>/workflows/<workflow-id>`，请求体使用 `api_key` 与 `inputs.image`。独立 Python 示例同样只从 `ROBOFLOW_API_KEY` 环境变量读取密钥。
+Roboflow Workflow 通过 Bob 设置读取 Workspace、Workflow ID、API Key、可选图片 URL；如果为空则使用 Base64，并自动提取输出文字；运行时自动拼接 `https://serverless.roboflow.com/<workspace>/workflows/<workflow-id>`，请求体使用 `api_key` 与 `inputs.image`。独立 Python 示例同样只从 `ROBOFLOW_API_KEY` 环境变量读取密钥。
 
 `image.js` 只进行一次 Base64 转换，计算字节数和文件签名，将编码复用于请求。实机诊断证实本机 Bob 的 `$data` 有转换方法但没有数值 `.length`；不得把 Node 测试替身的长度属性当作所有 Bob 构建的契约。此路径有独立回归。
 

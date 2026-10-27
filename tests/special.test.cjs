@@ -40,7 +40,6 @@ test("Roboflow Workflow sends api_key in the body and supports Base64 input", ()
     roboflowWorkflowApiKey: "workflow-key",
     roboflowWorkflowWorkspace: "ashers-workspace-u0hh3",
     roboflowWorkflowId: "claude-haiku-5-5-ocr",
-    roboflowWorkflowInputType: "base64",
   });
   const q = query();
   p.ocr(q.value, q.done);
@@ -57,7 +56,6 @@ test("Roboflow Workflow supports URL input and explicit output paths", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
     roboflowWorkflowApiKey: "workflow-key",
-    roboflowWorkflowInputType: "url",
     roboflowWorkflowImageUrl: "https://example.com/sample.png",
     roboflowWorkflowOutputPath: "outputs[0].text",
   }, {
@@ -71,11 +69,10 @@ test("Roboflow Workflow supports URL input and explicit output paths", () => {
   assert.equal(p.requests[0].body.inputs.image.value, "https://example.com/sample.png");
 });
 
-test("Roboflow Workflow rejects URL mode without an HTTPS image URL", () => {
+test("Roboflow Workflow rejects a non-HTTPS image URL", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
     roboflowWorkflowApiKey: "workflow-key",
-    roboflowWorkflowInputType: "url",
     roboflowWorkflowImageUrl: "http://example.com/sample.png",
   });
   const q = query();

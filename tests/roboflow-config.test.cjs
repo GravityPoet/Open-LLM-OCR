@@ -22,10 +22,10 @@ test("the manifest exposes a separate configurable Roboflow Workflow service", (
     "roboflowWorkflowWorkspace",
     "roboflowWorkflowId",
     "roboflowWorkflowApiKey",
-    "roboflowWorkflowInputType",
     "roboflowWorkflowImageUrl",
-    "roboflowWorkflowOutputPath",
   ]) assert.ok(info.options.some((option) => option.identifier === identifier), identifier);
+  assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowInputType"), false);
+  assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowOutputPath"), false);
   const key = info.options.find((option) => option.identifier === "roboflowWorkflowApiKey");
   assert.equal(key.textConfig.type, "secure");
 });
