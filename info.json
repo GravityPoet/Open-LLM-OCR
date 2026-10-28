@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -23,14 +23,9 @@
           "defaultPluginName": "Open-LLM-OCR · OpenDocRouter"
         },
         {
-          "title": "Roboflow GLM-OCR（固定入口）",
-          "value": "roboflow",
-          "defaultPluginName": "Open-LLM-OCR · Roboflow"
-        },
-        {
-          "title": "Roboflow Workflow（自定义）",
+          "title": "Roboflow OCR（自定义模型 / Workflow）",
           "value": "roboflowWorkflow",
-          "defaultPluginName": "Open-LLM-OCR · Roboflow Workflow"
+          "defaultPluginName": "Open-LLM-OCR · Roboflow"
         },
         {
           "title": "视觉大模型 API",
@@ -101,9 +96,9 @@
     {
       "identifier": "roboflowApiKey",
       "type": "text",
-      "title": "② Roboflow · Private API Key（GLM-OCR / Workflow 共用）",
+      "title": "② Roboflow · Private API Key",
       "defaultValue": "",
-      "desc": "GLM-OCR 与自定义 Workflow 共用同一把 Private API Key；不要填写 Public/Publishable Key。",
+      "desc": "Roboflow OCR 使用；不要填写 Public/Publishable Key。",
       "textConfig": {
         "type": "secure",
         "placeholderText": "Private API Key"
@@ -112,12 +107,12 @@
     {
       "identifier": "roboflowWorkflowId",
       "type": "text",
-      "title": "② Roboflow Workflow · 模型/Workflow 名称",
-      "defaultValue": "claude-haiku-5-5-ocr",
-      "desc": "填写你在 Roboflow 部署的 Workflow ID；插件会自动拼接 Endpoint。",
+      "title": "② Roboflow · 模型或 Workflow ID",
+      "defaultValue": "",
+      "desc": "填写模型或 Workflow ID；填 glm-ocr 使用智谱原生模型，其他名称使用固定工作区的 Workflow。",
       "textConfig": {
         "type": "visible",
-        "placeholderText": "claude-haiku-5-5-ocr"
+        "placeholderText": "glm-ocr 或你的 Workflow ID"
       }
     },
     {

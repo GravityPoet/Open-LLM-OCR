@@ -13,12 +13,12 @@
 | PaddleOCR-VL | Chat 兼容，图片在前，`OCR:` 在后，temperature=0 | 专用任务识别结果；普通模型不被强制设置采样参数 |
 | 本地 Paddle | POST `/ocr`，file Base64 | 有效 ocrResults / rec_texts |
 | 百度 jobs（旧配置兼容，标准设置已隐藏） | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
-| Roboflow GLM-OCR | POST `/infer/lmm`，Bearer Private Key，`model_id=glm-ocr`，Base64 image | 200 + `response` 文本；不保存公共图床 URL |
+| Roboflow OCR（统一入口） | 输入 `glm-ocr` 时 POST `/infer/lmm`；其他模型/Workflow ID POST `/<workspace>/workflows/<workflow-id>`；分别按官方协议携带 Private Key；始终 Base64 image | 统一转换为 Bob OCR 文本；不保存公共图床 URL |
 | OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=false`，Base64 document | 200 仍需检查整体 `status` 和 `pages[].status`；页级 `error.code/message` 原样归纳后返回，不把失败页当成空 OCR |
 
 Mistral 最新稳定 OCR 为 4.1；latest 可随官方更新，固定版本用于复现。插件请求 inline Markdown 表格，关闭图片 Base64 回传以缩小响应。不调用批处理、上传持久文件或生成额外批量任务。
 
-OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 默认 `glm-ocr`，最大输出 Token 为 2048。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
+OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 统一入口不预填模型名：填 `glm-ocr` 使用托管模型，填其他 ID 使用固定工作区的 Workflow。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
 
 Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用。Mistral 返回段落级结构块；保留文本和可用坐标，但不把段落框冒称行级定位精度。多页响应不把不同页坐标覆盖到同一截图。
 

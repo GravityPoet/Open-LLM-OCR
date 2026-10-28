@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.5.0",
+      "desc": "0.5.0：合并 Roboflow 托管 GLM-OCR 与自定义 Workflow 为单一 Roboflow OCR 入口；旧固定路径保留兼容，不再发布重复精简包。",
+      "sha256": "23cb5af005b276235c26c5bee9ff13fa7e6f98da64ee8d78b9bcd73a41ac2652",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.5.0/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793212757000
+    },
+    {
       "version": "0.4.9",
       "desc": "0.4.9：移除 Roboflow Workflow 的 Workspace、第二 API Key 和图片 URL 设置；固定工作区、共用 Private Key，始终发送当前截图。",
       "sha256": "cd504a59319c706a63f2db97cb9d1402de4fd36af2cf401160f7e1aaeef635aa",

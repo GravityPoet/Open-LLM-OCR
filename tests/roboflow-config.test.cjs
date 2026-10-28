@@ -2,7 +2,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { load, query } = require("./helpers.cjs");
 
-test("Roboflow uses text recognition despite a saved legacy task override", () => {
+test("legacy Roboflow settings still use text recognition despite a saved task override", () => {
   const p = load({
     serviceMode: "roboflow",
     roboflowApiKey: "fixture-key",
@@ -14,10 +14,11 @@ test("Roboflow uses text recognition despite a saved legacy task override", () =
   assert.equal(p.requests[0].body.prompt, "OCR");
 });
 
-test("the manifest exposes a separate configurable Roboflow Workflow service", () => {
+test("the manifest exposes one configurable Roboflow service", () => {
   const info = require("../info.json");
   const mode = info.options.find((option) => option.identifier === "serviceMode");
   assert.ok(mode.menuValues.some((value) => value.value === "roboflowWorkflow"));
+  assert.equal(mode.menuValues.some((value) => value.value === "roboflow"), false);
   assert.ok(info.options.some((option) => option.identifier === "roboflowWorkflowId"));
   assert.ok(info.options.some((option) => option.identifier === "roboflowApiKey"));
   assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowInputType"), false);
@@ -26,4 +27,5 @@ test("the manifest exposes a separate configurable Roboflow Workflow service", (
   assert.equal(key.textConfig.type, "secure");
   assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowWorkspace"), false);
   assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowImageUrl"), false);
+  assert.equal(info.options.find((option) => option.identifier === "roboflowWorkflowId").defaultValue, "");
 });

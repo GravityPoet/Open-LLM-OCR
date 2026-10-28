@@ -22,6 +22,8 @@ if (entry.status) process.exit(entry.status);
 const info = require("../info.json"),
   pkg = require("../package.json");
 if (info.version !== pkg.version) throw Error("Version mismatch");
+if (fs.existsSync(path.join(root, "Open-LLM-OCR-Roboflow.bobplugin")))
+  throw Error("Obsolete duplicate Roboflow package must not be present");
 const ids = info.options.map((o) => o.identifier);
 if (new Set(ids).size !== ids.length) throw Error("Duplicate options");
 for (const o of info.options) {

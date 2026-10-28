@@ -1,14 +1,14 @@
 # Open-LLM-OCR
 
-Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、Roboflow Workflow、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
+Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
-## 0.4.9 Roboflow Workflow 设置精简
+## 0.5.0 Roboflow OCR 入口合并
 
-- 新增独立的“Roboflow Workflow（自定义）”服务项，保留原有 GLM-OCR 服务项。
+- 合并为一个“Roboflow OCR（自定义模型 / Workflow）”服务项；旧 GLM-OCR 固定路径保留代码兼容。
 - Workspace 固定为当前项目工作区，不在客户设置中显示。
-- GLM-OCR 与 Workflow 共用同一个 Roboflow Private API Key。
+- Roboflow OCR 共用一个 Private API Key。
 - 插件始终发送当前截图 Base64，不要求填写图片 URL；输出文字自动提取。
-- API Key、Workflow 名称和其他参数都由用户自己在 Bob 设置中填写，插件不内置密钥。
+- API Key、模型或 Workflow ID 和其他参数都由用户自己在 Bob 设置中填写，插件不内置密钥。
 - 独立调用示例：`ROBOFLOW_API_KEY=... python3 scripts/roboflow-workflow-example.py 图片路径`；示例只从环境变量读 Key。
 
 ## 0.4.6 修复
@@ -29,7 +29,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码与本机候选为 **0.4.8**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
+源码与本机候选为 **0.5.0**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 
@@ -40,8 +40,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 | `Open-LLM-OCR.bobplugin`               | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
 | `Open-LLM-OCR-Azure.bobplugin`         | 只用微软                   | Endpoint、Key、总超时三个字段     |
 | `Open-LLM-OCR-Mistral.bobplugin`       | 只用 Mistral               | 接口地址、Key、模型、超时         |
-| `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Private Key、超时 |
-| `Open-LLM-OCR-Roboflow-Workflow.bobplugin` | 只用 Roboflow Workflow | Workflow 名称、共用 Private Key、超时 |
+| `Open-LLM-OCR-Roboflow-Workflow.bobplugin` | 只用 Roboflow OCR | 模型或 Workflow ID、Private Key、超时 |
 | `Open-LLM-OCR-OpenDocRouter.bobplugin` | 只用 OpenDocRouter OCR     | Endpoint、API Key、最大页数       |
 
 请从 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest) 的资产列表选择对应包。仓库根目录中的 `.bobplugin` 是开发构建产物，版本更新时会变化，不作为长期下载入口。
@@ -73,18 +72,18 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 - 默认 `mistral-ocr-latest`；截至 2026-10-25 指向 OCR 4.1，也可固定 `mistral-ocr-4-1`。
 - 使用原生 `/ocr` 接口。图片发送到配置的 Mistral 服务；不发送 Chat 请求或温度参数。
 
-### Roboflow GLM-OCR
+### Roboflow OCR
 
-选择“Roboflow GLM-OCR”，填写 `https://serverless.roboflow.com` 和 Private API Key。插件调用 `/infer/lmm`，固定 `model_id=glm-ocr` 和文字识别任务 `prompt=OCR`，无需选择任务模式或填写提示词；旧配置中的自定义任务提示也会忽略。图片使用 Base64，不上传到公开图床。
+选择“Roboflow OCR”，填写模型或 Workflow ID 和 Private API Key。插件会调用你部署的 Roboflow Workflow；旧 GLM-OCR 配置仍兼容，但不再单独显示。图片始终使用当前截图 Base64。
 
-选择“Roboflow Workflow（自定义）”后，只需要填写：
+只需要填写：
 
 ```text
-模型/Workflow 名称：claude-haiku-5-5-ocr
+模型/Workflow 名称：glm-ocr 或你的 Workflow ID
 API Key：你的 Roboflow Private API Key
 ```
 
-插件会自动调用固定工作区的 Workflow Endpoint，并发送 `{ api_key, inputs: { image: { type: "base64", value } } }`。
+填写 `glm-ocr` 时调用 Roboflow 托管的 GLM-OCR 原生接口；填写其他名称时调用固定工作区的 Workflow Endpoint，并发送 `{ api_key, inputs: { image: { type: "base64", value } } }`。因此智谱 GLM-OCR 和你自己部署的模型共用一个设置入口，但底层协议会按名称选择正确路径。
 
 ### OpenDocRouter OCR
 
@@ -121,7 +120,7 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 
 ## English
 
-Version 0.4.7 adds a configurable Roboflow Workflow adapter while preserving the existing GLM-OCR adapter. Workspace, Workflow ID, Private API Key, image input mode and optional output path are configured in Bob's native settings; no key is bundled.
+Version 0.5.0 merges Roboflow's hosted GLM-OCR and custom Workflows into one Roboflow OCR entry. Enter `glm-ocr` for the hosted model or another Workflow ID for a deployed model; legacy GLM-OCR settings remain compatible.
 
 Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 

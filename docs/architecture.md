@@ -2,9 +2,9 @@
 
 `main.js` 暴露 Bob 入口；`lib/service.js` 校验配置、选择适配器、收口结果。`config.js` 保留旧配置键，专用包仅切换默认服务身份。`runtime.js` 为每次调用独立持有截止时间、定时器、取消订阅和唯一完成状态；`url.js` 保留代理路径/query，并限制服务端返回的轮询或结果地址。
 
-`azure.js`、`mistral.js`、`cloud.js`、`baidu.js` 分别实现协议；`special.js` 同时提供 Roboflow GLM-OCR 和可配置 Workflow 适配器；`result.js` 负责阅读顺序、空白保留、归一化坐标与结果上限。达到上限返回明确错误，不以截断正文冒充完整结果。普通调用只加载所选适配器。
+`azure.js`、`mistral.js`、`cloud.js`、`baidu.js` 分别实现协议；`special.js` 提供统一 Roboflow OCR 入口，并兼容旧 GLM-OCR 与自定义 Workflow；`result.js` 负责阅读顺序、空白保留、归一化坐标与结果上限。达到上限返回明确错误，不以截断正文冒充完整结果。普通调用只加载所选适配器。
 
-Roboflow Workflow 通过 Bob 设置读取 Workspace、Workflow ID、API Key、可选图片 URL；如果为空则使用 Base64，并自动提取输出文字；运行时自动拼接 `https://serverless.roboflow.com/<workspace>/workflows/<workflow-id>`，请求体使用 `api_key` 与 `inputs.image`。独立 Python 示例同样只从 `ROBOFLOW_API_KEY` 环境变量读取密钥。
+统一 Roboflow OCR 通过 Bob 设置读取一个模型或 Workflow ID 和共用 API Key；填 `glm-ocr` 时使用托管模型的 `/infer/lmm` 协议，其他名称使用固定工作区的 Workflow 协议。Workflow 请求体使用 `api_key` 与 `inputs.image`；始终发送 Base64 当前截图并自动提取输出文字。旧 GLM-OCR 配置仍可读取。独立 Python 示例同样只从 `ROBOFLOW_API_KEY` 环境变量读取密钥。
 
 `image.js` 只进行一次 Base64 转换，计算字节数和文件签名，将编码复用于请求。实机诊断证实本机 Bob 的 `$data` 有转换方法但没有数值 `.length`；不得把 Node 测试替身的长度属性当作所有 Bob 构建的契约。此路径有独立回归。
 

@@ -2,7 +2,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { Data, load, query, ok } = require("./helpers.cjs");
 
-test("Roboflow GLM-OCR sends the documented native LMM request", () => {
+test("legacy Roboflow mode sends the documented native LMM request", () => {
   const p = load({ serviceMode: "roboflow", roboflowApiKey: "fixture-key" });
   const q = query();
   p.ocr(q.value, q.done);
@@ -51,10 +51,24 @@ test("Roboflow Workflow sends api_key in the body and supports Base64 input", ()
   });
 });
 
+test("the single Roboflow field routes glm-ocr to the native model endpoint", () => {
+  const p = load({
+    serviceMode: "roboflowWorkflow",
+    roboflowApiKey: "model-key",
+    roboflowWorkflowId: "glm-ocr",
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.equal(p.requests[0].url, "https://serverless.roboflow.com/infer/lmm");
+  assert.equal(p.requests[0].header.Authorization, "Bearer model-key");
+  assert.equal(p.requests[0].body.model_id, "glm-ocr");
+});
+
 test("Roboflow Workflow automatically extracts common output text", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
     roboflowApiKey: "workflow-key",
+    roboflowWorkflowId: "claude-haiku-5-5-ocr",
   }, {
     request(r) {
       r.handler(ok({ outputs: [{ text: "First line\nSecond line" }] }));
@@ -70,6 +84,7 @@ test("Roboflow Workflow always sends the current screenshot as Base64", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
     roboflowApiKey: "workflow-key",
+    roboflowWorkflowId: "claude-haiku-5-5-ocr",
   });
   const q = query();
   p.ocr(q.value, q.done);
