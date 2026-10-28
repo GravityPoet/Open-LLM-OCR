@@ -17,8 +17,8 @@ test("legacy Roboflow settings still use text recognition despite a saved task o
 test("the manifest exposes one configurable Roboflow service", () => {
   const info = require("../info.json");
   const mode = info.options.find((option) => option.identifier === "serviceMode");
-  assert.ok(mode.menuValues.some((value) => value.value === "roboflowWorkflow"));
-  assert.equal(mode.menuValues.some((value) => value.value === "roboflow"), false);
+  assert.ok(mode.menuValues.some((value) => value.value === "roboflow"));
+  assert.equal(mode.menuValues.some((value) => value.value === "roboflowWorkflow"), false);
   assert.ok(info.options.some((option) => option.identifier === "roboflowWorkflowId"));
   assert.ok(info.options.some((option) => option.identifier === "roboflowApiKey"));
   assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowInputType"), false);

@@ -51,9 +51,22 @@ test("Roboflow Workflow sends api_key in the body and supports Base64 input", ()
   });
 });
 
+test("the standard unified Roboflow entry routes a custom ID to Workflow", () => {
+  const p = load({
+    serviceMode: "roboflow",
+    roboflowApiKey: "workflow-key",
+    roboflowWorkflowId: "my-custom-ocr",
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.equal(p.requests[0].url, "https://serverless.roboflow.com/ashers-workspace-u0hh3/workflows/my-custom-ocr");
+  assert.equal(p.requests[0].body.api_key, "workflow-key");
+  assert.equal(p.requests[0].body.inputs.image.type, "base64");
+});
+
 test("the single Roboflow field routes glm-ocr to the native model endpoint", () => {
   const p = load({
-    serviceMode: "roboflowWorkflow",
+    serviceMode: "roboflow",
     roboflowApiKey: "model-key",
     roboflowWorkflowId: "glm-ocr",
   });
@@ -61,6 +74,14 @@ test("the single Roboflow field routes glm-ocr to the native model endpoint", ()
   p.ocr(q.value, q.done);
   assert.equal(p.requests[0].url, "https://serverless.roboflow.com/infer/lmm");
   assert.equal(p.requests[0].header.Authorization, "Bearer model-key");
+  assert.equal(p.requests[0].body.model_id, "glm-ocr");
+});
+
+test("a blank unified Roboflow model keeps the legacy GLM-OCR default", () => {
+  const p = load({ serviceMode: "roboflow", roboflowApiKey: "model-key" });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.equal(p.requests[0].url, "https://serverless.roboflow.com/infer/lmm");
   assert.equal(p.requests[0].body.model_id, "glm-ocr");
 });
 

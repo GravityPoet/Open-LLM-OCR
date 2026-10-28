@@ -2,13 +2,14 @@
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
-## 0.5.0 Roboflow OCR 入口合并
+## 0.5.1 Roboflow OCR 入口兼容修复
 
 - 合并为一个“Roboflow OCR（自定义模型 / Workflow）”服务项；旧 GLM-OCR 固定路径保留代码兼容。
 - Workspace 固定为当前项目工作区，不在客户设置中显示。
 - Roboflow OCR 共用一个 Private API Key。
 - 插件始终发送当前截图 Base64，不要求填写图片 URL；输出文字自动提取。
 - API Key、模型或 Workflow ID 和其他参数都由用户自己在 Bob 设置中填写，插件不内置密钥。
+- 统一入口沿用旧的 `roboflow` 配置值，升级后旧服务不会被临时切到 OpenDocRouter。
 - 独立调用示例：`ROBOFLOW_API_KEY=... python3 scripts/roboflow-workflow-example.py 图片路径`；示例只从环境变量读 Key。
 
 ## 0.4.6 修复
@@ -29,7 +30,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码与本机候选为 **0.5.0**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
+源码与本机候选为 **0.5.1**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 
@@ -120,7 +121,7 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 
 ## English
 
-Version 0.5.0 merges Roboflow's hosted GLM-OCR and custom Workflows into one Roboflow OCR entry. Enter `glm-ocr` for the hosted model or another Workflow ID for a deployed model; legacy GLM-OCR settings remain compatible.
+Version 0.5.1 keeps the unified Roboflow entry compatible with the legacy `roboflow` service value. Enter `glm-ocr` for the hosted model or another Workflow ID for a deployed model; legacy GLM-OCR settings remain compatible.
 
 Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 

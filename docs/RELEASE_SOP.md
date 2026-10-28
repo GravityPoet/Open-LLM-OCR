@@ -34,10 +34,13 @@
 - 首次 `gh release create ... --draft` 返回临时 `untagged-*` 页面地址，这是 GitHub 草稿资产的正常中间状态；发布后已用 `gh release view v0.4.6` 回读正式 tag 地址、`draft=false`、`prerelease=false`、目标提交和六个资产。
 - 五个包 SHA 与发布资产 digest 已逐一核对；`appcast.json` 顶部版本为 0.4.6，更新源中的标准包 SHA 与正式资产一致。
 
-## 0.5.0 发布记录
+## 0.5.1 发布记录
 
 - 将 Roboflow 托管 GLM-OCR 与自定义 Workflow 合并为一个“Roboflow OCR（自定义模型 / Workflow）”入口；旧 `serviceMode=roboflow` 仅保留运行时兼容读取。
 - `glm-ocr` 走 `POST /infer/lmm`；其他模型或 Workflow ID 走固定工作区的 `POST /<workspace>/workflows/<workflow-id>`。两条路径共用一把 Private API Key，但认证位置按官方协议分别处理。
 - 新版发布清单只包含统一的 `Open-LLM-OCR-Roboflow-Workflow.bobplugin`，不再生成或发布旧 `Open-LLM-OCR-Roboflow.bobplugin`。
 - 候选包 SHA256：标准 `23cb5af005b276235c26c5bee9ff13fa7e6f98da64ee8d78b9bcd73a41ac2652`；Azure `e906959cf762673c26d90d07d68b2e7e9a97ef562369dd2d29397603c5089003`；Mistral `1bcbfb0e4d091e55f4dbbad447a73577b6b706a5b69394fffd6e733feadcc681`；统一 Roboflow `34813af98cf796d7699806690b69b8bb659d4682f3222dca1fdbf489b3b2d1f0`；OpenDocRouter `02593674f0bea64f6e7aa292737de1e285371be7fbe5ccf1b036c1ae76f16733`。
 - 验证：`npm run verify` 通过（71 个 Node 测试、10 个 Python 测试、五个包字节一致）；`swift tests/jscore-smoke.swift .` 通过 9 项。
+- 兼容修复：标准插件的统一 Roboflow 菜单继续使用历史 `serviceMode=roboflow` 值；空模型默认 GLM-OCR，自定义 ID 才走 Workflow，避免升级后 Bob 下拉框与真实运行服务不一致。
+- 候选包 SHA256：标准 `fcbac7b74c8387c09755e1868e7813a42364860e86cc3246e9fffcd9a86a2628`；Azure `2d08bdcd5d40c80ed8318c5c5a03396a49c4c9b629de24ee326de870431bd256`；Mistral `87ff61433733a795f8441deff1c390975901ee37d3cc7dfed22ba85f085137c8`；统一 Roboflow `35002c758f3a1b0572a7d12449b3266a6c94da9e9cf2f6eae7ec3fd59bfbcdb1`；OpenDocRouter `9488628f70c7d67e69152a3a6013dd91b1b736a08aa63b617ddd259790dfb1cb`。
+- 验证：`npm run verify` 通过（73 个 Node 测试、10 个 Python 测试、五个包字节一致）；`swift tests/jscore-smoke.swift .` 通过 9 项。
