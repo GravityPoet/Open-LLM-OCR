@@ -27,6 +27,7 @@
 | 包凭据扫描误报 | 自定义正则把 `placeholderText: sk-xxxxxxxx...` 当成真实 Key | 误报来自示例占位符，包内没有真实凭据 | 扫描时允许固定占位符，并继续检查实际高熵凭据、用户配置和 work 文件未进入包 |
 | Bob 文件选择后版本未变化 | 选择 `.bobplugin` 后列表仍显示 0.3.0 | 文件选择流程没有完成升级，不能只凭对话框关闭判定安装成功 | 用 Bob 的“检查更新”读取 appcast；必须看到“更新成功”和插件列表 0.4.0，再逐文件比对安装目录 |
 | 统一 Roboflow 后仍出现两个包 | 构建脚本仍把旧 `Open-LLM-OCR-Roboflow.bobplugin` 列入发布循环，导致新客户同时看到固定 GLM-OCR 和自定义 Workflow | 将 GLM-OCR 路径合并到统一 Roboflow 设置：填 `glm-ocr` 走 `/infer/lmm`，其他 ID 走固定工作区 Workflow；旧 `serviceMode=roboflow` 只保留代码兼容；发布循环只允许五个正式包 | 每次发版检查仓库根目录和 Release 资产均不存在旧 Roboflow 包，并用统一入口的两条协议回归测试 |
+| Release tag 与版本源不一致 | 版本修改留在工作树未暂存，构建包为 0.5.1 但 tag 提交中的 `info.json` 仍为 0.5.0 | 版本 bump 后同时回读 `package.json`、`info.json`、包内 `info.json` 和 `git show HEAD:info.json`；只从干净提交创建 tag；不移动已发布 tag，递增版本修正 | 发布前要求工作树干净、版本源一致、包 provenance 与提交 SHA 一致 |
 
 ## 0.4.6 发布记录
 
@@ -34,7 +35,7 @@
 - 首次 `gh release create ... --draft` 返回临时 `untagged-*` 页面地址，这是 GitHub 草稿资产的正常中间状态；发布后已用 `gh release view v0.4.6` 回读正式 tag 地址、`draft=false`、`prerelease=false`、目标提交和六个资产。
 - 五个包 SHA 与发布资产 digest 已逐一核对；`appcast.json` 顶部版本为 0.4.6，更新源中的标准包 SHA 与正式资产一致。
 
-## 0.5.1 发布记录
+## 0.5.2 发布记录
 
 - 将 Roboflow 托管 GLM-OCR 与自定义 Workflow 合并为一个“Roboflow OCR（自定义模型 / Workflow）”入口；旧 `serviceMode=roboflow` 仅保留运行时兼容读取。
 - `glm-ocr` 走 `POST /infer/lmm`；其他模型或 Workflow ID 走固定工作区的 `POST /<workspace>/workflows/<workflow-id>`。两条路径共用一把 Private API Key，但认证位置按官方协议分别处理。
@@ -42,5 +43,5 @@
 - 候选包 SHA256：标准 `23cb5af005b276235c26c5bee9ff13fa7e6f98da64ee8d78b9bcd73a41ac2652`；Azure `e906959cf762673c26d90d07d68b2e7e9a97ef562369dd2d29397603c5089003`；Mistral `1bcbfb0e4d091e55f4dbbad447a73577b6b706a5b69394fffd6e733feadcc681`；统一 Roboflow `34813af98cf796d7699806690b69b8bb659d4682f3222dca1fdbf489b3b2d1f0`；OpenDocRouter `02593674f0bea64f6e7aa292737de1e285371be7fbe5ccf1b036c1ae76f16733`。
 - 验证：`npm run verify` 通过（71 个 Node 测试、10 个 Python 测试、五个包字节一致）；`swift tests/jscore-smoke.swift .` 通过 9 项。
 - 兼容修复：标准插件的统一 Roboflow 菜单继续使用历史 `serviceMode=roboflow` 值；空模型默认 GLM-OCR，自定义 ID 才走 Workflow，避免升级后 Bob 下拉框与真实运行服务不一致。
-- 候选包 SHA256：标准 `fcbac7b74c8387c09755e1868e7813a42364860e86cc3246e9fffcd9a86a2628`；Azure `2d08bdcd5d40c80ed8318c5c5a03396a49c4c9b629de24ee326de870431bd256`；Mistral `87ff61433733a795f8441deff1c390975901ee37d3cc7dfed22ba85f085137c8`；统一 Roboflow `35002c758f3a1b0572a7d12449b3266a6c94da9e9cf2f6eae7ec3fd59bfbcdb1`；OpenDocRouter `9488628f70c7d67e69152a3a6013dd91b1b736a08aa63b617ddd259790dfb1cb`。
+- 候选包 SHA256：标准 `0dae633ad9a4d863265eb31255b18a2afac9043c7b77e7e37cd8b52215ae0d3a`；Azure `234c5c12d18c69da2bf68919643da44e88b42dd05a760128861055e75fddcae1`；Mistral `db8ac313cdc523272149ce70a37072c1cbd29a9a6b9387d219cd1367f8abe274`；统一 Roboflow `3aad8391f5f19bf566744ad3e4e0f77a1b471094c52ed80545d195eff8f0765c`；OpenDocRouter `29d369b00dda2a2ba47bff0893d772857bd59d3d202c85bde2564dd4671370d7`。
 - 验证：`npm run verify` 通过（73 个 Node 测试、10 个 Python 测试、五个包字节一致）；`swift tests/jscore-smoke.swift .` 通过 9 项。
