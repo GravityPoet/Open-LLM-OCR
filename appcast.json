@@ -4,7 +4,7 @@
     {
       "version": "0.5.2",
       "desc": "0.5.2：修复统一 Roboflow 入口升级兼容，并对齐源码、版本和发布资产；保留历史 roboflow 配置值。",
-      "sha256": "fcbac7b74c8387c09755e1868e7813a42364860e86cc3246e9fffcd9a86a2628",
+      "sha256": "0dae633ad9a4d863265eb31255b18a2afac9043c7b77e7e37cd8b52215ae0d3a",
       "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.5.2/Open-LLM-OCR.bobplugin",
       "minBobVersion": "1.8.0",
       "timestamp": 1793218200000
