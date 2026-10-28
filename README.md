@@ -2,12 +2,12 @@
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow GLM-OCR、Roboflow Workflow、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
-## 0.4.8 Roboflow Workflow 设置精简
+## 0.4.9 Roboflow Workflow 设置精简
 
 - 新增独立的“Roboflow Workflow（自定义）”服务项，保留原有 GLM-OCR 服务项。
-- 在 Bob 设置中填写 Workspace、Workflow/模型名称和 Private API Key；插件自动拼接 Workflow Endpoint。
-- 输入方式默认 Base64，直接发送当前截图；URL 模式只有在 Workflow 要求公网图片地址时才使用。
-- 图片 URL 只在 URL 模式使用；输出字段路径是高级可选项，留空会自动提取常见文字字段。
+- Workspace 固定为当前项目工作区，不在客户设置中显示。
+- GLM-OCR 与 Workflow 共用同一个 Roboflow Private API Key。
+- 插件始终发送当前截图 Base64，不要求填写图片 URL；输出文字自动提取。
 - API Key、Workflow 名称和其他参数都由用户自己在 Bob 设置中填写，插件不内置密钥。
 - 独立调用示例：`ROBOFLOW_API_KEY=... python3 scripts/roboflow-workflow-example.py 图片路径`；示例只从环境变量读 Key。
 
@@ -40,8 +40,8 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 | `Open-LLM-OCR.bobplugin`               | 升级已有服务、切换所有后端 | 保留原 identifier、名称和旧配置键 |
 | `Open-LLM-OCR-Azure.bobplugin`         | 只用微软                   | Endpoint、Key、总超时三个字段     |
 | `Open-LLM-OCR-Mistral.bobplugin`       | 只用 Mistral               | 接口地址、Key、模型、超时         |
-| `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Endpoint、Private Key、输出上限、超时 |
-| `Open-LLM-OCR-Roboflow-Workflow.bobplugin` | 只用 Roboflow Workflow | Workspace、Workflow 名称、Private Key、可选图片 URL |
+| `Open-LLM-OCR-Roboflow.bobplugin`      | 只用 Roboflow GLM-OCR      | Private Key、超时 |
+| `Open-LLM-OCR-Roboflow-Workflow.bobplugin` | 只用 Roboflow Workflow | Workflow 名称、共用 Private Key、超时 |
 | `Open-LLM-OCR-OpenDocRouter.bobplugin` | 只用 OpenDocRouter OCR     | Endpoint、API Key、最大页数       |
 
 请从 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest) 的资产列表选择对应包。仓库根目录中的 `.bobplugin` 是开发构建产物，版本更新时会变化，不作为长期下载入口。
@@ -77,18 +77,14 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 
 选择“Roboflow GLM-OCR”，填写 `https://serverless.roboflow.com` 和 Private API Key。插件调用 `/infer/lmm`，固定 `model_id=glm-ocr` 和文字识别任务 `prompt=OCR`，无需选择任务模式或填写提示词；旧配置中的自定义任务提示也会忽略。图片使用 Base64，不上传到公开图床。
 
-选择“Roboflow Workflow（自定义）”后，通常只需要填写：
+选择“Roboflow Workflow（自定义）”后，只需要填写：
 
 ```text
-Workspace：ashers-workspace-u0hh3
 模型/Workflow 名称：claude-haiku-5-5-ocr
 API Key：你的 Roboflow Private API Key
-图片输入：Base64
-图片 URL：留空
-输出字段路径：留空
 ```
 
-插件会自动调用：`https://serverless.roboflow.com/<Workspace>/workflows/<Workflow 名称>`，并发送 `{ api_key, inputs: { image: { type, value } } }`。
+插件会自动调用固定工作区的 Workflow Endpoint，并发送 `{ api_key, inputs: { image: { type: "base64", value } } }`。
 
 ### OpenDocRouter OCR
 

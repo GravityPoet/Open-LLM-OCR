@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -23,7 +23,7 @@
           "defaultPluginName": "Open-LLM-OCR · OpenDocRouter"
         },
         {
-          "title": "Roboflow GLM-OCR",
+          "title": "Roboflow GLM-OCR（固定入口）",
           "value": "roboflow",
           "defaultPluginName": "Open-LLM-OCR · Roboflow"
         },
@@ -99,46 +99,14 @@
       }
     },
     {
-      "identifier": "roboflowBaseUrl",
-      "type": "text",
-      "title": "② Roboflow · 接口地址",
-      "defaultValue": "https://serverless.roboflow.com",
-      "desc": "Roboflow GLM-OCR Serverless API 地址。",
-      "textConfig": {
-        "type": "visible",
-        "placeholderText": "https://serverless.roboflow.com"
-      }
-    },
-    {
       "identifier": "roboflowApiKey",
       "type": "text",
-      "title": "② Roboflow · Private API Key",
+      "title": "② Roboflow · Private API Key（GLM-OCR / Workflow 共用）",
       "defaultValue": "",
-      "desc": "仅 Roboflow 使用；不要填写 Public/Publishable Key。",
+      "desc": "GLM-OCR 与自定义 Workflow 共用同一把 Private API Key；不要填写 Public/Publishable Key。",
       "textConfig": {
         "type": "secure",
         "placeholderText": "Private API Key"
-      }
-    },
-    {
-      "identifier": "roboflowMaxNewTokens",
-      "type": "text",
-      "title": "② Roboflow · 最大输出 Token",
-      "defaultValue": "2048",
-      "desc": "64–8192；文字越多消耗越高。",
-      "textConfig": {
-        "type": "visible"
-      }
-    },
-    {
-      "identifier": "roboflowWorkflowWorkspace",
-      "type": "text",
-      "title": "② Roboflow Workflow · Workspace",
-      "defaultValue": "ashers-workspace-u0hh3",
-      "desc": "Roboflow 工作区名称；通常不需要修改。",
-      "textConfig": {
-        "type": "visible",
-        "placeholderText": "ashers-workspace-u0hh3"
       }
     },
     {
@@ -150,28 +118,6 @@
       "textConfig": {
         "type": "visible",
         "placeholderText": "claude-haiku-5-5-ocr"
-      }
-    },
-    {
-      "identifier": "roboflowWorkflowApiKey",
-      "type": "text",
-      "title": "② Roboflow Workflow · API Key",
-      "defaultValue": "",
-      "desc": "发送到请求体的 api_key；使用 Roboflow Private API Key，按 Workflow 额度计费。",
-      "textConfig": {
-        "type": "secure",
-        "placeholderText": "Private API Key"
-      }
-    },
-    {
-      "identifier": "roboflowWorkflowImageUrl",
-      "type": "text",
-      "title": "② Roboflow Workflow · 图片 URL（可选）",
-      "defaultValue": "",
-      "desc": "填写后自动使用 URL；留空则自动把当前截图作为 Base64 发送。必须是 https 图片地址。",
-      "textConfig": {
-        "type": "visible",
-        "placeholderText": "https://example.com/image.png"
       }
     },
     {

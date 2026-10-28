@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.4.9",
+      "desc": "0.4.9：移除 Roboflow Workflow 的 Workspace、第二 API Key 和图片 URL 设置；固定工作区、共用 Private Key，始终发送当前截图。",
+      "sha256": "cd504a59319c706a63f2db97cb9d1402de4fd36af2cf401160f7e1aaeef635aa",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.4.9/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793150517015
+    },
+    {
       "version": "0.4.8",
       "desc": "0.4.8：精简 Roboflow Workflow 设置；自动根据图片 URL选择 URL 或 Base64，移除不常用的输入方式与输出路径选项。",
       "sha256": "10a6a71e0e505d47a7e6cf764afd8ec95a93ad57fdb025d1e448bacc9b6735d7",

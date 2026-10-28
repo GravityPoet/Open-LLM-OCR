@@ -37,8 +37,7 @@ test("Roboflow response text becomes Bob OCR lines", () => {
 test("Roboflow Workflow sends api_key in the body and supports Base64 input", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
-    roboflowWorkflowApiKey: "workflow-key",
-    roboflowWorkflowWorkspace: "ashers-workspace-u0hh3",
+    roboflowApiKey: "workflow-key",
     roboflowWorkflowId: "claude-haiku-5-5-ocr",
   });
   const q = query();
@@ -52,12 +51,10 @@ test("Roboflow Workflow sends api_key in the body and supports Base64 input", ()
   });
 });
 
-test("Roboflow Workflow supports URL input and explicit output paths", () => {
+test("Roboflow Workflow automatically extracts common output text", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
-    roboflowWorkflowApiKey: "workflow-key",
-    roboflowWorkflowImageUrl: "https://example.com/sample.png",
-    roboflowWorkflowOutputPath: "outputs[0].text",
+    roboflowApiKey: "workflow-key",
   }, {
     request(r) {
       r.handler(ok({ outputs: [{ text: "First line\nSecond line" }] }));
@@ -66,19 +63,18 @@ test("Roboflow Workflow supports URL input and explicit output paths", () => {
   const q = query();
   p.ocr(q.value, q.done);
   assert.deepEqual(Array.from(q.completions[0].result.texts, (x) => x.text), ["First line", "Second line"]);
-  assert.equal(p.requests[0].body.inputs.image.value, "https://example.com/sample.png");
+  assert.equal(p.requests[0].body.inputs.image.type, "base64");
 });
 
-test("Roboflow Workflow rejects a non-HTTPS image URL", () => {
+test("Roboflow Workflow always sends the current screenshot as Base64", () => {
   const p = load({
     serviceMode: "roboflowWorkflow",
-    roboflowWorkflowApiKey: "workflow-key",
-    roboflowWorkflowImageUrl: "http://example.com/sample.png",
+    roboflowApiKey: "workflow-key",
   });
   const q = query();
   p.ocr(q.value, q.done);
-  assert.equal(p.requests.length, 0);
-  assert.match(q.completions[0].error.message, /https 图片地址/);
+  assert.equal(p.requests[0].body.inputs.image.type, "base64");
+  assert.equal(p.requests[0].body.inputs.image.value, q.value.image.toBase64());
 });
 
 test("OpenDocRouter sends sync, cache false, layout false and base64 document", () => {

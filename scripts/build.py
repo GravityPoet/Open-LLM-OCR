@@ -11,7 +11,7 @@ def archive(profile: str = "standard") -> bytes:
         info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflow':'Roboflow OCR','roboflowWorkflow':'Roboflow Workflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
         info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflow':'Roboflow GLM-OCR','roboflowWorkflow':'Roboflow 自定义 Workflow OCR','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
         info.pop('appcast', None)
-        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowBaseUrl','roboflowApiKey','roboflowMaxNewTokens','requestTimeoutSec') if profile == 'roboflow' else ('roboflowWorkflowWorkspace','roboflowWorkflowId','roboflowWorkflowApiKey','roboflowWorkflowImageUrl','requestTimeoutSec') if profile == 'roboflowWorkflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
+        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowApiKey','requestTimeoutSec') if profile == 'roboflow' else ('roboflowApiKey','roboflowWorkflowId','requestTimeoutSec') if profile == 'roboflowWorkflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
         for option in info['options']:
             if option['identifier'] == 'cloudBaseUrl':
                 option.update(title='Azure Endpoint' if profile == 'azure' else 'Mistral Endpoint', defaultValue=option['defaultValue'] if profile == 'azure' else 'https://api.mistral.ai/v1', desc='当前服务的接口地址。')
@@ -24,8 +24,6 @@ def archive(profile: str = "standard") -> bytes:
                 option['textConfig'] = {'type': 'visible', 'placeholderText': 'Mistral 自定义模型 ID'}
             if profile == 'roboflow' and option['identifier'] == 'roboflowBaseUrl':
                 option.update(title='Roboflow Endpoint', desc='固定使用 /infer/lmm。')
-            if profile == 'roboflowWorkflow' and option['identifier'] == 'roboflowWorkflowWorkspace':
-                option.update(title='Roboflow Workflow Workspace', desc='Roboflow 工作区名称。')
             if profile == 'openDocRouter' and option['identifier'] == 'openDocRouterBaseUrl':
                 option.update(title='OpenDocRouter Endpoint', desc='固定使用 /v1/parse。')
     buf = io.BytesIO()

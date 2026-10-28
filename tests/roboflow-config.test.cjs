@@ -18,14 +18,12 @@ test("the manifest exposes a separate configurable Roboflow Workflow service", (
   const info = require("../info.json");
   const mode = info.options.find((option) => option.identifier === "serviceMode");
   assert.ok(mode.menuValues.some((value) => value.value === "roboflowWorkflow"));
-  for (const identifier of [
-    "roboflowWorkflowWorkspace",
-    "roboflowWorkflowId",
-    "roboflowWorkflowApiKey",
-    "roboflowWorkflowImageUrl",
-  ]) assert.ok(info.options.some((option) => option.identifier === identifier), identifier);
+  assert.ok(info.options.some((option) => option.identifier === "roboflowWorkflowId"));
+  assert.ok(info.options.some((option) => option.identifier === "roboflowApiKey"));
   assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowInputType"), false);
   assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowOutputPath"), false);
-  const key = info.options.find((option) => option.identifier === "roboflowWorkflowApiKey");
+  const key = info.options.find((option) => option.identifier === "roboflowApiKey");
   assert.equal(key.textConfig.type, "secure");
+  assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowWorkspace"), false);
+  assert.equal(info.options.some((option) => option.identifier === "roboflowWorkflowImageUrl"), false);
 });
