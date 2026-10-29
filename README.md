@@ -1,5 +1,11 @@
 # Open-LLM-OCR
 
+## 0.6.5 OpenDocRouter OCR 纯文字输出（Bob 1.20+）
+
+- OpenDocRouter 视觉解析模型可能把图片、头像和图标生成 `[Figure: ...]`、`[图片：...]` 或 `[Icon]` 描述；插件现在在交给 Bob 前移除这些生成的非文字占位符，只保留实际可见文字。
+- 图片仍正常发送给 OpenDocRouter，`layout=true` 和原图翻译坐标不变；代码围栏里的字面 `[Figure: ...]` / `[Icon]` 不会被误删。
+- 同时清理解析器生成的成对 Markdown 粗体/删除线标记，避免 OCR 文本被 Bob 误当成加粗；原始单个符号、代码和真实文字保留。
+
 ## 0.6.4 原图翻译坐标支持（Bob 1.20+）
 
 - Mistral OCR 4.x、Roboflow PP-OCR Medium / Small / Tiny、OpenDocRouter Layout、Azure 和本地多边形路径现在返回 Bob 可用的归一化坐标，可被原图翻译调用。
@@ -112,7 +118,7 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 
 ### OpenDocRouter OCR
 
-选择“OpenDocRouter OCR”，填写 `https://www.opendocrouter.ai` 和 API Key。插件调用 `/v1/parse`，默认 `llamaindex/ocria-1`，可在设置中替换模型名称，固定使用 `mode=sync`、`cache=false`、`layout=false`；图片直接 Base64 发送，PDF 使用 `application/pdf` 并按“最大页数”发送 `pages: "1-N"`。
+选择“OpenDocRouter OCR”，填写 `https://www.opendocrouter.ai` 和 API Key。插件调用 `/v1/parse`，默认 `llamaindex/ocria-1`，可在设置中替换模型名称，固定使用 `mode=sync`、`cache=false`、`layout=true`；图片直接 Base64 发送，PDF 使用 `application/pdf` 并按“最大页数”发送 `pages: "1-N"`。
 
 ### 视觉大模型
 

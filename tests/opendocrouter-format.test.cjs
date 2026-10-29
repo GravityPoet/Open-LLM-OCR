@@ -39,6 +39,28 @@ test('OpenDocRouter closes only matching code fences and retains an unfinished c
   assert.equal(recognize(markdown('````text\n    # code\n```\n    last\n````\n## Heading')),'    # code\n```\n    last\nHeading');
   assert.equal(recognize(markdown('```python\ndef f():\n    return 1')),'def f():\n    return 1');
 });
+test('OpenDocRouter drops generated figure and icon descriptions but keeps visible text',()=>{
+  const input='[图片：一位黑发微笑男子的资料照片] **Tibo** ✓\n@thsottiaux\n\n[Icon] 显示翻译 ⚙\n\n第25天/\n\n我们已**即日起将所有使用上限翻倍**。';
+  assert.equal(recognize(markdown(input)), 'Tibo ✓\n@thsottiaux\n\n显示翻译 ⚙\n\n第25天/\n\n我们已即日起将所有使用上限翻倍。');
+});
+test('OpenDocRouter does not rewrite literal image-like markup inside code fences',()=>{
+  const input='```text\n[Figure: keep this literal]\n[Icon]\n**keep markers**\n```';
+  assert.equal(recognize(markdown(input)), '[Figure: keep this literal]\n[Icon]\n**keep markers**');
+});
+test('OpenDocRouter image-description cleanup keeps layout coordinates',()=>{
+  const p=load(),items=p.module('special').openDocItems({pages:[{
+    markdown:'[图片：头像描述] **Tibo** ✓\n@thsottiaux\n\n[Icon] 显示翻译 ⚙',
+    layout:{status:'ok',elements:[
+      {type:'text',lines:[0,1],boxes:[{x:.1,y:.1,w:.4,h:.1}]},
+      {type:'text',lines:[3,3],boxes:[{x:.1,y:.3,w:.3,h:.1}]},
+      {type:'picture',lines:null,boxes:[{x:.6,y:.1,w:.2,h:.2}]},
+    ]},
+  }]},{});
+  const output=p.module('result').build(items,{});
+  assert.deepEqual(JSON.parse(JSON.stringify(output.texts.map(x=>x.text))),['Tibo ✓\n@thsottiaux','','显示翻译 ⚙']);
+  assert.equal(output.texts[0].boundingBox.points[0].x,.1);
+  assert.equal(output.texts[2].boundingBox.points[0].y,.3);
+});
 test('already converted document text still enforces output limits and hides internal markers',()=>{
   const p=load(),result=p.module('result');
   assert.throws(()=>result.build([{text:'x'.repeat(1000001),plainText:true}],{}),/识别结果过大/);

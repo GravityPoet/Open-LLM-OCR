@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.6.5",
+      "desc": "0.6.5：清理 OpenDocRouter 生成的图片/图标描述占位符，保留 OCR 文字、布局坐标和代码内容。",
+      "sha256": "2d360fe9ec502c9fea42628c8024b54212319396f9c17425a7a1c32266479661",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.6.5/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.20.0",
+      "timestamp": 1793306070000
+    },
+    {
       "version": "0.6.4",
       "desc": "0.6.4：修正原图翻译坐标版的 Bob 最低版本门禁，包和更新源统一要求 Bob 1.20.0。",
       "sha256": "3905b7df5f52a8dafe7a1090e294a5a177588d3b091d10dec8b27c61af666fbf",

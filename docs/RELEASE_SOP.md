@@ -141,3 +141,14 @@
 - 修正 0.6.3 坐标版的兼容性门禁：`package/info.json` 和 appcast 统一要求 Bob `1.20.0`；不覆盖已发布的 v0.6.3 资产，递增发布 v0.6.4。
 - 本机 Bob 原生界面确认 0.6.3 → 0.6.4 安装成功；17 个安装文件与标准包逐一匹配，`minBobVersion=1.20.0` 回读正确，General OCR 配置组未改变。
 - 0.6.4 使用与 0.6.3 相同的 116 Node、10 Python、43 JavaScriptCore 验证结果；六个公开下载资产已逐字节和 SHA256 核对。
+
+## 0.6.5 发布范围与门禁
+
+- OpenDocRouter 的部分视觉解析配方会返回 `[Figure: ...]`、`[图片：...]`、`[Icon]` 等图片/图标说明。插件只在 OpenDocRouter 结果层移除这些明确生成的非文字占位符；图片仍发送给服务，`layout=true` 与 Bob 坐标保持不变。
+- 代码围栏内的同名字面文本保留；新增回归覆盖图片描述清理、Markdown 标记清理、代码围栏保真和坐标保留。请求模型、Key、缓存和计费参数不变，不增加识别调用。
+- 发布前通过 `npm run verify`（119 个 Node、10 个 Python、五包字节比对）和 `swift tests/jscore-smoke.swift .`（43 项 JavaScriptCore）。
+
+## 0.6.5 发布与本机记录
+
+- 候选版本：`0.6.5`；标准包 SHA256：`2d360fe9ec502c9fea42628c8024b54212319396f9c17425a7a1c32266479661`。其他四个精简包同时由确定性构建生成并在发布前校验。
+- 真实 OpenDocRouter `anthropic/claude-haiku-5-5` 合成截图回包为 HTTP 200、`layout.status=ok`；修复只改变本地结果清理，不关闭图片或布局。

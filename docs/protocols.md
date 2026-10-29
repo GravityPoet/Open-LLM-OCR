@@ -83,3 +83,7 @@ OpenDocRouter Markdown 回退先区分代码围栏与正文。正文中的完整
 `supportBoundingBox()` 按当前服务能力返回：Azure、本地多边形、Mistral 官方 OCR 4.x、OpenDocRouter 布局和 Roboflow PP-OCR 声明支持；通用视觉模型、GLM-OCR、Qwen 和自定义 Workflow 仍不声明。不能从纯文本推断真实位置。
 
 OpenDocRouter 的布局是服务端生成的 grounded boxes，开关与普通文本解析共用一个服务配置；如果布局生成失败，保留 OCR Markdown，但不伪造坐标。PP-OCR 只在预测框完整、图片尺寸有效且行匹配成功时返回行框；否则保留文字并让 Bob 使用普通 OCR。Mistral 自定义模型没有官方块坐标时不声明原图翻译能力。
+
+## OpenDocRouter 图片描述清理（0.6.5）
+
+部分 OpenDocRouter 解析配方会把头像、图片或图标生成 `[Figure: ...]`、`[图片：...]`、`[Icon]` 等 Markdown 占位符。这些不是图片中可见文字，插件在 OpenDocRouter 结果层移除明确的图片/图标描述后再交给 Bob；仍发送原图并保留 `layout=true` 的坐标。代码围栏内的同名字面文本不清理，成对 Markdown 粗体/删除线标记也只在普通 OCR 文本中去掉，避免把 OCR 结果误渲染为样式。
