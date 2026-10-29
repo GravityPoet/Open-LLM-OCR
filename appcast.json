@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.6.0",
+      "desc": "0.6.0：Roboflow 单一入口与模型菜单，默认 GLM-OCR；增加 PP-OCR / Qwen 原生调用，共用一把 Key；升级逐字识别指令，优化已验证 DeepSeek OCR 请求。",
+      "sha256": "2af97a43e5a0c492b073bb271b65d5f79bf99f875d10c52b62b12b25ba961490",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.6.0/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793240618000
+    },
+    {
       "version": "0.5.3",
       "desc": "0.5.3：区分 Roboflow Workflow 入口认证与模型步骤权限、套餐限制，修正误导性的密钥错误提示；请求与计费选择不变。",
       "sha256": "4326a83f8f2c87538afd9477280030242a59018663dea36a1fc11ef1b438757d",
