@@ -2,6 +2,12 @@
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
+## 0.6.2 OpenDocRouter 表格与代码
+
+- OpenDocRouter 的完整 HTML 表格先按原位置转换为制表符文本，再拆分结果行，避免多行表格留下 `</tr>`、`</table>` 等标签。
+- 移除模型添加的代码围栏，保留代码缩进、Tab、注释和代码里的字面 HTML；支持多个表格与前后段落的原始顺序。
+- 此修复只处理返回结果，不改变模型、密钥、请求参数或计费方式，不增加识别请求。模型原有的相似字符误认仍可能存在。
+
 ## 0.6.1 缩进与默认指令显示
 
 - PP-OCR 使用同一次响应中的文字坐标恢复可辨认的水平缩进；保留原识别字符、重复行和已有空白，缺少有效坐标时保留原结果，不增加识别请求。
@@ -135,6 +141,8 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 `main.js` 只暴露 Bob 入口；`lib/` 按配置、生命周期、图片、结果与服务商分工。归档可重复构建，`--check` 比对源码与包字节。测试不使用真实凭据；`scripts/live-smoke.cjs` 只有在显式从 stdin 提供配置后才发送合成图片。
 
 ## English
+
+Version 0.6.2 converts complete OpenDocRouter HTML tables to tab-separated text in their original position before splitting lines. It removes generated code fences while preserving indentation, tabs, comments, and literal HTML inside code. Multiple tables and surrounding paragraphs keep their order. This is a local response-formatting fix: models, credentials, request parameters, billing, and inference-call counts are unchanged. Similar-character recognition errors can still occur upstream.
 
 Version 0.6.1 isolates Azure Document Intelligence and Mistral native OCR from unrelated vision-prompt, image-detail, and protocol settings; the form labels distinguish shared cloud connection fields from vision-only controls.
 

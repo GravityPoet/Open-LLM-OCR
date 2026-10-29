@@ -71,3 +71,9 @@ GLM 的相似字符差异已在原始 `response` 中复现。官方 Text Recogni
 ## 原生 OCR 参数隔离（0.6.1）
 
 微软 Document Intelligence 请求体仅含 `base64Source`，不发送大模型提示词；Mistral 原生请求也不发送该指令。两者不读取或校验 `cloudPrompt`、`cloudImageDetail`、`cloudProtocol`。这些字段仅在 `providerCloud` 模式使用；通用请求超时、Key 和本服务模型校验保持有效。界面连接字段共用以保留旧配置，但明确标出视觉大模型专用参数。
+
+## OpenDocRouter 表格与代码（0.6.2）
+
+OpenDocRouter Markdown 回退先区分代码围栏与正文。正文中的完整 HTML 表格保持所在位置转换为制表符行，Markdown 表格只转换已确认的表格段；非表格的竖线保持原样。代码围栏标记移除，内部空格、Tab、注释和字面 HTML 保留；已转换的行通过内部纯文本标记避免再次按 HTML 解释，输出给 Bob 时不暴露该标记，原结果大小限制继续生效。围栏外的生成标题前缀仍按原有规则清理，模型字符误认不猜测替换。
+
+请求继续使用原模型和 `mode=sync`、`cache=false`、`layout=false`，不增加网络调用。Node 与 JavaScriptCore 均回放真实 Haiku 复杂图回包，覆盖完整表格、缩进、行列顺序及代码字面标签。

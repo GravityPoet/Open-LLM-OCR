@@ -10,6 +10,7 @@ var failed=false
 context.exceptionHandler={_,e in failed=true;print("JavaScriptCore 错误：\(e?.toString() ?? "unknown")")}
 context.setObject(sources,forKeyedSubscript:"sources" as NSString)
 context.setObject(try String(contentsOf:root.appendingPathComponent("tests/fixtures/pp-ocr-code-layout.json"),encoding:.utf8),forKeyedSubscript:"ppLayoutFixture" as NSString)
+context.setObject(try String(contentsOf:root.appendingPathComponent("tests/fixtures/opendocrouter-haiku-code-table.json"),encoding:.utf8),forKeyedSubscript:"openDocFixture" as NSString)
 context.evaluateScript(#"""
 var $option={serviceMode:'providerCloud',cloudBaseUrl:'https://example.com/v1',cloudApiKey:'fixture-key',cloudModel:'fixture-model'};
 var $info={identifier:'io.github.gravitypoet.jk.llm.ocr'},$env={appVersion:'1.21.2'};
@@ -46,7 +47,12 @@ service.ocr({image:png},function(p){check(p.result.texts[0].text==='OCR 123');})
 $option={serviceMode:'roboflow',roboflowApiKey:'fixture-key',roboflowModel:'pp-ocr-medium'};
 $http.request=function(r){r.handler({response:{statusCode:200},data:JSON.parse(ppLayoutFixture)});};
 service.ocr({image:png},function(p){var text=p.result.texts.map(function(line){return line.text;}).join('\n');check(text.indexOf('\n    # keep indentation\n    return a - b')>=0);check(text.replace(/\s/g,'')===JSON.parse(ppLayoutFixture).result.replace(/\s/g,''));});
-if(passed!==34)throw Error('Expected 34 assertions; got '+passed);
+$option={serviceMode:'openDocRouter',openDocRouterApiKey:'fixture-key',openDocRouterModel:'anthropic/claude-haiku-5-5'};
+$http.request=function(r){check(r.body.mode==='sync'&&r.body.cache===false&&r.body.layout===false);r.handler({response:{statusCode:200},data:JSON.parse(openDocFixture)});};
+service.ocr({image:png},function(p){var text=p.result.texts.map(function(line){return line.text;}).join('\n');check(!/<\/?(?:table|tr|td|th)\b|```/i.test(text));check(text.indexOf('\n    # keep indentation\n    return a - b')>=0);check(text.indexOf('名称\t数量\t金额\nAlpha-1\t2\t42.50\nBeta-2\t3\t18.00')>=0);});
+$http.request=function(r){r.handler({response:{statusCode:200},data:{status:'completed',pages:[{status:'ok',markdown:'```html\n    <table><tr><td>code</td></tr></table>\n```'}]}});};
+service.ocr({image:png},function(p){check(p.result.texts[0].text==='    <table><tr><td>code</td></tr></table>');});
+if(passed!==39)throw Error('Expected 39 assertions; got '+passed);
 """#)
 if failed {exit(1)}
-print("JavaScriptCore 通过：模型协议、Azure、Mistral、本地、Roboflow 8 个原生选项、DeepSeek 优化、PP-OCR 原生坐标缩进恢复，共 34 项。")
+print("JavaScriptCore 通过：模型协议、Azure、Mistral、本地、Roboflow 8 个原生选项、DeepSeek 优化、PP-OCR 缩进、OpenDocRouter 表格与代码保真，共 39 项。")
