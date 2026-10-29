@@ -66,3 +66,8 @@
 - 本轮读取 `gh api repos/GravityPoet/Open-LLM-OCR/releases/latest` 曾遇到 `net/http: TLS handshake timeout`；它是请求未完成，不能据此判定 Release 不存在。发布写入前重新读取精确远端、tag 与 Release，成功后再继续，不盲目重复创建。
 - 本地验证通过：`npm run verify` 的 91 个 Node 测试、10 个 Python 测试和五包字节比对；`swift tests/jscore-smoke.swift .` 的 28 项检查。最终适配器的八个原生选项均返回 HTTP 200，同一张中英文合成图的预期文字全部匹配（忽略空白）；每次识别前额度检查均确认 underCap=true。
 - 联调传输出现一次 Node `fetch` 网络失败及一次额度查询连接失败；未收到模型错误响应，不能推断 Key 或协议错误。只读连通性检查与 Python HTTPS 查询返回 200 后，使用同一插件代码生成的请求经 Python 标准库传输完成八项验证；保留原失败记录。产品代码不增加网络重试、不修改系统代理或证书校验。
+- 追加 DeepSeek OCR 优化：相同图片和默认指令下，OpenRouter / Fireworks 的指定 1017 模型关闭额外思考；两张合成图各三次，字符差异总量没有增加，思考 token 均为 0。最终候选新增专用参数回归及 JavaScriptCore 检查；其余模型与用户自定义指令保持原请求。
+- 八个 Roboflow 原生选项的真实验证继续复用：追加变更仅位于 `lib/cloud.js` 的通用视觉模型分支，该分支不参与 Roboflow 调用；本机安装后仍需通过 GLM-OCR 原生验证。
+- 本机文件选择器的“前往”路径未成功定位 Documents 中的安装包，保持旧安装不动；使用经过 SHA 校验的 Downloads 候选副本从原生文件列表选择，安装后核对版本与全部文件字节。未完成选择不能冒称安装成功。
+- GitHub CLI 多次 TLS handshake timeout，但同一已登录账号通过 Python 标准库 HTTPS 的 GitHub REST 查询成功。必要时按官方 REST 完成同一仓库的 Release / 资产操作；凭据仅在内存中使用，不修改系统代理或 TLS 校验。写入未知结果先回读再重试。
+- 最终追加验证通过：94 个 Node 测试、10 个 Python 测试、32 项 JavaScriptCore 检查；五包重新构建后逐字节一致。五个云端模型基线共 30 次请求全部返回可解析 OCR 文字；两个 DeepSeek 的关闭思考组各 6 次也全部成功，字符差异总数分别由 14/16 降为 9/9（各比较 741 个非空白字符）。性能测量包括网络等待，不据此承诺固定响应时间。

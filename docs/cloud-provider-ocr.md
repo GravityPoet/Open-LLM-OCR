@@ -13,3 +13,5 @@ PaddleOCR-VL 使用图片在前、`OCR:` 在后的专用任务格式。旧默认
 0.6.0 的通用视觉模型默认逐字转录：不翻译、纠错、润色或补全，保留原文符号、代码缩进及段落，表格列间使用制表符。旧默认文本会自动升级，自定义文本保留。空白结果由 Bob 显示“未识别到文字”。这些约束不保证相似符号或模糊字完全准确。
 
 专用模型继续遵守各自契约：PaddleOCR-VL 默认 `OCR:`；Roboflow GLM-OCR 为 `OCR`；PP-OCR 不发送聊天提示词。Roboflow 的 Qwen 原生调用使用逐字转录指令，自定义 Workflow 则使用工作流模型步骤中配置的提示词。
+
+默认指令下的 DeepSeek OCR 请求会按供应商设置关闭额外思考：OpenRouter 使用 `reasoning.enabled=false`，Fireworks 使用 `reasoning_effort=none`，仅匹配已实测的 V4.1 Flash 1017 模型。自定义指令、其他模型保留原行为；不减少图像清晰度、不增加输出上限，也不把隐藏思考误认为关闭思考。

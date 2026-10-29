@@ -8,6 +8,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - 可选 GLM-OCR、PP-OCR Small / Tiny / Medium、Qwen3-VL 2B、Qwen3.5 0.8B / 2B / 4B。此前均已在当前账号的免费额度内完成中英文截图实测；可用权限和计费仍以平台及账号为准。
 - 自定义 Workflow 保留在同一个模型下拉框中，仅该选项需要填写下方的 Workflow ID；不显示工作区、图片 URL 或输出路径设置。
 - 通用视觉模型默认按原文逐字转录，明确禁止纠错、润色和补全，表格列间使用制表符。旧默认指令自动升级，用户自定义指令保留；PaddleOCR-VL 仍使用专用 `OCR:`，GLM-OCR 使用 `OCR`，PP-OCR 不发送聊天提示词。
+- 默认逐字 OCR 指令下，OpenRouter / Fireworks 的指定 DeepSeek V4.1 Flash 1017 模型关闭额外思考，减少输出等待和思考 token；保持图片清晰度和完整输出，自定义指令保留服务商默认行为。其他模型保留原请求参数。
 - 新模型菜单尚未保存时继续读取旧模型或 Workflow ID；用户明确选择菜单模型后，以当前选择为准。Private API Key 沿用原配置，不内置密钥。
 - Workflow 入口认证与模型步骤权限错误继续分别提示；插件不会自动切换供应商、改变计费方式或重试收费请求。
 
@@ -96,6 +97,7 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 
 - 选择“视觉大模型 API”，填写 Base URL、API Key 和支持图像的模型名。
 - 协议选择 Chat、Responses、Gemini 或 Claude；完整接口地址优先。
+- OpenRouter `deepseek/deepseek-v4.1-flash-1017` 与 Fireworks `accounts/fireworks/models/deepseek-v4p1-flash-1017` 在默认 OCR 指令下使用各自已验证的关闭思考参数；自定义指令及其他模型不被修改思考设置。
 - 默认指令按阅读顺序逐字转录，不翻译、纠错、润色或补全；保留符号、代码缩进和段落，表格按行使用制表符分列。相似符号仍可能误识别，提示词不保证逐字符准确。
 - 两个历史默认识别指令自动升级；真正的自定义指令保留。PaddleOCR-VL 默认仍发送官方 `OCR:`，自定义 Table / Formula 等任务提示不被替换。
 - 空白结果按 Bob 接口返回“未识别到文字”，不会生成空字符串引号或说明文字。Roboflow 自定义 Workflow 的内部提示词由其工作流模型步骤配置。
@@ -126,6 +128,8 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 ## English
 
 Version 0.6.0 keeps one Roboflow entry and one Private API Key. The model menu defaults to GLM-OCR and also supports PP-OCR Small/Tiny/Medium, Qwen3-VL 2B, and Qwen3.5 0.8B/2B/4B through their native endpoints. Custom Workflows remain an option in the same menu. Base64 screenshots and output extraction are automatic; no companion app is required. Legacy IDs remain readable until a new model selection is saved.
+
+For the default transcription instruction, the verified OpenRouter and Fireworks DeepSeek V4.1 Flash 1017 routes disable optional reasoning without changing image detail or output limits. Custom instructions and unverified models retain provider defaults; other models retain their original request parameters.
 
 The general vision prompt now asks for verbatim transcription, preserves punctuation and indentation, prohibits correction and invented content, and separates table columns with tabs. Old stock prompts upgrade automatically; custom instructions remain intact. Dedicated OCR tasks retain their own request formats. Similar-looking characters may still be misread; these instructions do not guarantee exact transcription. Roboflow-managed provider models can still require an eligible plan or a provider key in the Workflow editor; the plugin never changes billing or retries inference automatically.
 

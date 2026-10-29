@@ -57,3 +57,7 @@ Workspace 认证成功、可以读取 Workflow，与内部模型步骤获准执�
 一个 Roboflow 服务和一把 Private API Key；默认 `glm-ocr`。PP-OCR 三档分别发送 `pp_ocr_version_id=tiny-tiny/small-small/medium-medium`，读取 `result`；GLM-OCR 和 Qwen 读取 `response`。Qwen3.5 使用 `/infer/lmm/qwen3_5-<size>` 路径和 `enable_thinking=false`，其余 LMM 使用 `/infer/lmm`。所有内置模型直接发送当前截图 Base64，凭据仅在 Bearer 请求头中。自定义 Workflow 使用原有请求体认证，不与原生模型混用。
 
 显式菜单选择优先于保留的旧 Workflow 字段；新菜单缺失时兼容读取旧 ID。非法菜单值或 Workflow 路径在发请求前拒绝；不会自动重试、创建工作流或切换计费方式。
+
+## DeepSeek OCR 响应优化（0.6.0）
+
+仅对 OpenRouter 与 Fireworks 上已验证的 V4.1 Flash 1017、Chat 协议及默认逐字转录指令设置关闭思考；使用各自支持的字段，不改变图片、温度或输出上限。自定义指令及其他路由不被强制修改。未通过关闭思考验收的其他模型不强制发送该参数。连接建立耗时与模型思考分别统计；Bob 公开网络接口未提供连接池设置，插件不伪造逐字 OCR 展示或更改宿主网络设置。
