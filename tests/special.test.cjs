@@ -179,7 +179,7 @@ test("a Roboflow entry authentication failure remains distinct from a model-step
   assert.equal(p.requests.length, 1);
 });
 
-test("OpenDocRouter sends sync, cache false, layout false and base64 document", () => {
+test("OpenDocRouter sends sync, cache false, layout true and base64 document", () => {
   const p = load({
     serviceMode: "openDocRouter",
     openDocRouterApiKey: "fixture-key",
@@ -192,10 +192,69 @@ test("OpenDocRouter sends sync, cache false, layout false and base64 document", 
   assert.equal(r.body.model, "llamaindex/ocria-1");
   assert.equal(r.body.mode, "sync");
   assert.equal(r.body.cache, false);
-  assert.equal(r.body.layout, false);
+  assert.equal(r.body.layout, true);
   assert.equal(r.body.document.data, q.value.image.toBase64());
   assert.equal(r.body.document.mime_type, "image/png");
   assert.equal(r.body.pages, undefined);
+});
+
+test("OpenDocRouter converts official layout elements into normalized line boxes", () => {
+  const p = load();
+  const items = p.module("special").openDocItems({
+    pages: [{
+      page: 1,
+      status: "ok",
+      markdown: "标题\n\n正文第一行\n正文第二行",
+      layout: {
+        status: "ok",
+        width: 1000,
+        height: 500,
+        elements: [
+          { type: "title", lines: [0, 0], boxes: [{ x: 0.1, y: 0.05, w: 0.3, h: 0.08 }] },
+          { type: "text", lines: [2, 3], boxes: [{ x: 0.2, y: 0.2, w: 0.5, h: 0.18 }] },
+        ],
+      },
+    }],
+  }, {});
+  assert.equal(JSON.stringify(items.map((item) => item.text)), JSON.stringify(["标题", "", "正文第一行\n正文第二行"]));
+  assert.equal(items[0].boundingBox.points[0].x, 0.1);
+  assert.equal(items[2].boundingBox.points[2].y, 0.38);
+});
+test('OpenDocRouter layout preserves uncovered text and uses existing table and code cleanup',()=>{
+  const p=load(),markdown='before\n## Title\n\n```python\n    # comment\n    return 1\n```\n<table><tr><td>A</td><td>B</td></tr></table>\nafter';
+  const data={pages:[{markdown,layout:{status:'ok',elements:[
+    {type:'title',lines:[1,1],boxes:[{x:.1,y:.1,w:.4,h:.1}]},
+    {type:'code',lines:[3,6],boxes:[{x:.1,y:.3,w:.4,h:.2}]},
+    {type:'table',lines:[7,7],boxes:[{x:.1,y:.6,w:.4,h:.1}]}
+  ]}}]};
+  const result=p.module('result').build(p.module('special').openDocItems(data,{}),{});
+  assert.equal(result.texts.map(t=>t.text).join('\n'),'before\nTitle\n\n    # comment\n    return 1\nA\tB\nafter');
+  assert.equal(result.texts.filter(t=>t.boundingBox).length,3);
+});
+test('OpenDocRouter invalid or overlapping ranges fall back to complete text without guessed positions',()=>{
+  const p=load(),markdown='one\ntwo\nthree';
+  for(const ranges of [[[0.5,1]],[[0,'1']],[[0,1],[1,2]]]){
+    const items=p.module('special').openDocItems({pages:[{markdown,layout:{status:'ok',elements:ranges.map(lines=>({lines,boxes:[{x:.1,y:.1,w:.4,h:.1}]}))}}]},{});
+    assert.equal(items.map(t=>t.text).join('\n'),markdown);
+    assert.ok(items.every(t=>!t.boundingBox));
+  }
+});
+test('OpenDocRouter multi-page and ambiguous multi-box results retain text without combining page or column positions',()=>{
+  const p=load(),a={markdown:'one',layout:{status:'ok',elements:[{lines:[0,0],boxes:[{x:.1,y:.1,w:.2,h:.1},{x:.6,y:.1,w:.2,h:.1}]}]}};
+  assert.equal(p.module('special').openDocItems({pages:[a]},{}).filter(t=>t.boundingBox).length,0);
+  const b={markdown:'two',layout:{status:'ok',elements:[{lines:[0,0],boxes:[{x:.1,y:.2,w:.4,h:.1}]}]}};
+  const items=p.module('special').openDocItems({pages:[a,b]},{});
+  assert.equal(items.map(t=>t.text).join('\n'),'one\n\ntwo');
+  assert.ok(items.every(t=>!t.boundingBox));
+});
+test('OpenDocRouter keeps unwrapped code content and rejects invalid or rotated boxes without changing text',()=>{
+  const p=load();
+  for(const box of [{x:NaN,y:.1,w:.4,h:.1},{x:.9,y:.1,w:.4,h:.1},{x:.1,y:.1,w:.4,h:.1,r:30}]){
+    const items=p.module('special').openDocItems({pages:[{markdown:'    <td>literal</td>',layout:{status:'ok',elements:[{type:'code',lines:[0,0],boxes:[box]}]}}]},{});
+    const output=p.module('result').build(items,{});
+    assert.equal(output.texts[0].text,'    <td>literal</td>');
+    assert.equal(output.texts[0].boundingBox,undefined);
+  }
 });
 
 test("OpenDocRouter sends PDF MIME and the configured page range", () => {

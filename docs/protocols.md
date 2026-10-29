@@ -14,13 +14,13 @@
 | 本地 Paddle | POST `/ocr`，file Base64 | 有效 ocrResults / rec_texts |
 | 百度 jobs（旧配置兼容，标准设置已隐藏） | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
 | Roboflow OCR（统一入口） | 默认 GLM-OCR；GLM / Qwen3-VL POST `/infer/lmm`，PP-OCR POST `/ocr/pp-ocr`，Qwen3.5 使用模型路径；自定义 Workflow POST `/<workspace>/workflows/<workflow-id>`；共用 Private Key、始终 Base64 image | 统一转换为 Bob OCR 文本；不保存公共图床 URL |
-| OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=false`，Base64 document | 200 仍需检查整体 `status` 和 `pages[].status`；页级 `error.code/message` 原样归纳后返回，不把失败页当成空 OCR |
+| OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=true`，Base64 document | 200 仍需检查整体 `status` 和 `pages[].status`；读取 `pages[].layout.elements[].lines/boxes` 并转换为 Bob 坐标；布局失败时保留 Markdown 文本 |
 
 Mistral 最新稳定 OCR 为 4.1；latest 可随官方更新，固定版本用于复现。插件请求 inline Markdown 表格，关闭图片 Base64 回传以缩小响应。不调用批处理、上传持久文件或生成额外批量任务。
 
 OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 统一入口默认选择 GLM-OCR；其他原生模型直接从下拉框选择。只有选择“自定义模型 / Workflow”才使用下方 ID；旧 Workflow ID 保留，升级后需从新菜单选择自定义以继续使用。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
 
-Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用。Mistral 返回段落级结构块；保留文本和可用坐标，但不把段落框冒称行级定位精度。多页响应不把不同页坐标覆盖到同一截图。
+Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用。Mistral OCR 4+ 的 `include_blocks=true` 返回段落级结构块和四角坐标；插件将其转换为 Bob 坐标。OpenDocRouter 的 `layout=true` 返回阅读顺序元素和归一化 boxes；插件按元素覆盖的 Markdown 行合并为带框文本块。Roboflow PP-OCR 的预测框按行合并后输出带框文本。多页响应不把不同页坐标覆盖到同一截图。
 
 总超时覆盖图片提交、轮询及下载。生成/提交请求不盲目重发；百度仅在明确拒绝模型参数时按原策略换模型。取消信号由宿主提供时使用；Bob 当前 OCR query 文档未承诺所有入口都提供取消信号，因此每条路径另有截止时间保证结束。
 
@@ -76,4 +76,10 @@ GLM 的相似字符差异已在原始 `response` 中复现。官方 Text Recogni
 
 OpenDocRouter Markdown 回退先区分代码围栏与正文。正文中的完整 HTML 表格保持所在位置转换为制表符行，Markdown 表格只转换已确认的表格段；非表格的竖线保持原样。代码围栏标记移除，内部空格、Tab、注释和字面 HTML 保留；已转换的行通过内部纯文本标记避免再次按 HTML 解释，输出给 Bob 时不暴露该标记，原结果大小限制继续生效。围栏外的生成标题前缀仍按原有规则清理，模型字符误认不猜测替换。
 
-请求继续使用原模型和 `mode=sync`、`cache=false`、`layout=false`，不增加网络调用。Node 与 JavaScriptCore 均回放真实 Haiku 复杂图回包，覆盖完整表格、缩进、行列顺序及代码字面标签。
+请求继续使用原模型和 `mode=sync`、`cache=false`；OpenDocRouter 为支持原图翻译坐标启用 `layout=true`，该字段可能增加少量响应和费用。Node 与 JavaScriptCore 覆盖完整布局元素、PP-OCR 行框、Mistral 块框以及缺坐标回退路径。
+
+## 原图翻译坐标接入（0.6.3）
+
+`supportBoundingBox()` 按当前服务能力返回：Azure、本地多边形、Mistral 官方 OCR 4.x、OpenDocRouter 布局和 Roboflow PP-OCR 声明支持；通用视觉模型、GLM-OCR、Qwen 和自定义 Workflow 仍不声明。不能从纯文本推断真实位置。
+
+OpenDocRouter 的布局是服务端生成的 grounded boxes，开关与普通文本解析共用一个服务配置；如果布局生成失败，保留 OCR Markdown，但不伪造坐标。PP-OCR 只在预测框完整、图片尺寸有效且行匹配成功时返回行框；否则保留文字并让 Bob 使用普通 OCR。Mistral 自定义模型没有官方块坐标时不声明原图翻译能力。

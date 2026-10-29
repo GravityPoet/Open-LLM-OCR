@@ -120,3 +120,10 @@
 - 本机 Bob 原生界面确认 0.6.1 → 0.6.2 安装成功，17 个安装文件与标准包完全一致。OpenDocRouter Haiku 服务的原生按钮验证成功；当前 General 配置组与安装前逐项相同，模型、密钥、服务名称和启用状态均保留。
 - 保存本轮配置恢复点并验证旧插件恢复包；受管配置备份只保留最新两份，过期的配置备份和 0.5.3 恢复包移入可恢复废纸篓，父目录身份保持。当前插件恢复入口为已校验的 0.6.1 公开下载包，另保留 0.6.0 恢复包。
 - 标准 appcast 在六个公开下载核对后才加入 0.6.2；后续元数据提交不移动 tag，不重建或覆盖已发布资产。
+
+## 0.6.3 坐标支持范围与门禁
+
+- 接入 Mistral OCR 4.x 块坐标、Roboflow PP-OCR 行坐标和 OpenDocRouter `layout.elements` 坐标；`supportBoundingBox()` 只对能稳定提供坐标的服务声明 true。
+- OpenDocRouter 由 `layout=false` 改为 `layout=true`，保留 `sync`、`cache=false`；布局字段可能增加少量响应和费用，必须在请求回归中核对。
+- GLM-OCR、通用视觉模型、Qwen 和自定义 Workflow 仍不得声明坐标支持；不能用文本长度或行号猜测图片位置。
+- 门禁至少覆盖：Bob 归一化四点、Mistral block 坐标、PP-OCR 预测框合并、OpenDocRouter layout 元素行范围、多页隔离、缺坐标回退、原图翻译服务能力矩阵；完成后再打包、安装和发布。

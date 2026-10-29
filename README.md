@@ -1,5 +1,11 @@
 # Open-LLM-OCR
 
+## 0.6.3 原图翻译坐标支持
+
+- Mistral OCR 4.x、Roboflow PP-OCR Medium / Small / Tiny、OpenDocRouter Layout、Azure 和本地多边形路径现在返回 Bob 可用的归一化坐标，可被原图翻译调用。
+- OpenDocRouter 请求启用 `layout=true`，解析官方 `layout.elements` 的行范围和 boxes；这会增加少量响应数据和布局费用。
+- GLM-OCR、通用视觉模型、Qwen 和自定义 Workflow 仍只返回文字，不声明坐标能力，避免原图译文覆盖错位。
+
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
 ## 0.6.2 OpenDocRouter 表格与代码

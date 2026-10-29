@@ -17,6 +17,10 @@ test('PP-OCR restores observed code indentation from real response boxes without
   assert.match(text,/\n {4}# keep indentation\n {4}return a - b/);
   assert.equal(text.replace(/\s/g,''),fixture.result.replace(/\s/g,''));
   assert.match(text,/\n名称 数量 金额\nAlpha-1 2 42\.50/);
+  const codeLine = r.result.texts.find((line) => line.text.indexOf("# keep indentation") >= 0);
+  assert.ok(codeLine.boundingBox);
+  assert.ok(codeLine.boundingBox.points[2].x > codeLine.boundingBox.points[0].x);
+  assert.ok(r.result.texts[0].boundingBox);
   assert.equal(JSON.stringify(fixture),before);
 });
 test('missing, invalid, or incomplete geometry preserves the original PP-OCR text',()=>{
@@ -50,5 +54,14 @@ test('PP-OCR follows pixel offsets for two-space indentation and scaled images',
       {class:'return 1',x:80*scale,y:100*scale,width:80*scale,height:20*scale},
     ]};
     assert.equal(recognize(data).result.texts.map(line=>line.text).join('\n'),'function first()\n  return 0\n  return 1');
+  }
+});
+test('PP-OCR returns coordinates for single short lines and pure Chinese without an indentation pitch',()=>{
+  for(const words of [['你好'],['你好','世界','再见']]){
+    const data={result:words.join('\n'),image:{width:400,height:300},predictions:words.map((text,i)=>({class:text,x:100,y:30+i*60,width:80,height:20}))};
+    const r=recognize(data);
+    assert.equal(r.result.texts.map(t=>t.text).join('\n'),data.result);
+    assert.ok(r.result.texts.every(t=>t.boundingBox));
+    assert.equal(r.result.texts[0].boundingBox.points[0].x,0.15);
   }
 });

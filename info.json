@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -88,7 +88,7 @@
       "type": "text",
       "title": "① OpenDocRouter · 最大页数",
       "defaultValue": "50",
-      "desc": "1–200；请求使用 sync 与 cache=false。",
+      "desc": "1–200；请求使用 sync、cache=false，并启用布局坐标以支持原图翻译。",
       "textConfig": {
         "type": "visible"
       }

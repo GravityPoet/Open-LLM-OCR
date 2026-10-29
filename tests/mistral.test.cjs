@@ -126,3 +126,11 @@ test("Mistral malformed response reports failure, error body is redacted", () =>
   assert.ok(q.completions[0].error);
   assert.doesNotMatch(q.completions[0].error.message, /fixture-key/);
 });
+test('Mistral ignores invalid rectangle geometry and keeps content without fabricated boxes',()=>{
+  const p=load();
+  for(const rect of [[0,0,0,20],[40,0,20,20],[-10,0,20,20],[0,0,200,20],[0,0,Infinity,20]]){
+    const [top_left_x,top_left_y,bottom_right_x,bottom_right_y]=rect;
+    const items=p.module('mistral').parse({pages:[{dimensions:{width:100,height:100},blocks:[{type:'text',content:'text',top_left_x,top_left_y,bottom_right_x,bottom_right_y}]}]});
+    assert.equal(items[0].text,'text');assert.equal(items[0].boundingBox,undefined);
+  }
+});
