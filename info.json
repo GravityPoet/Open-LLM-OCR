@@ -1,6 +1,6 @@
 {
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "category": "ocr",
   "name": "Open-LLM-OCR (Local + Cloud)",
   "summary": "本地、视觉模型、微软、Mistral、Roboflow 与 OpenDocRouter OCR。",
@@ -8,7 +8,7 @@
   "author": "Open-LLM-OCR Contributors",
   "homepage": "https://github.com/GravityPoet/Open-LLM-OCR",
   "appcast": "https://raw.githubusercontent.com/GravityPoet/Open-LLM-OCR/main/appcast.json",
-  "minBobVersion": "1.8.0",
+  "minBobVersion": "1.20.0",
   "options": [
     {
       "identifier": "serviceMode",

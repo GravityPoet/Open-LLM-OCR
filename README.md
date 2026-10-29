@@ -1,6 +1,6 @@
 # Open-LLM-OCR
 
-## 0.6.3 原图翻译坐标支持
+## 0.6.4 原图翻译坐标支持（Bob 1.20+）
 
 - Mistral OCR 4.x、Roboflow PP-OCR Medium / Small / Tiny、OpenDocRouter Layout、Azure 和本地多边形路径现在返回 Bob 可用的归一化坐标，可被原图翻译调用。
 - OpenDocRouter 请求启用 `layout=true`，解析官方 `layout.elements` 的行范围和 boxes；这会增加少量响应数据和布局费用。
