@@ -26,7 +26,10 @@ service.ocr({image:png,from:'en'},function(p){check(p.result.texts[0].boundingBo
 Object.keys(timers).forEach(function(k){if(timers[k]&&timers[k].interval===1)timers[k].handler();});
 $option.serviceMode='mistral';$http.request=function(r){check(r.body.model==='mistral-ocr-latest');r.handler({response:{statusCode:200},data:{pages:[{index:0,markdown:'OCR 123'}]}});};service.ocr({image:png},function(p){check(p.result.texts[0].text==='OCR 123');});
 $option.serviceMode='local';$http.request=function(r){r.handler({response:{statusCode:200},data:{ocrResults:[{rec_texts:['local OCR 123']}]}});};service.ocr({image:png},function(p){check(p.result.texts[0].text==='local OCR 123');});
-if(passed!==9)throw Error('Expected 9 assertions; got '+passed);
+$option={serviceMode:'roboflow',roboflowApiKey:'fixture-key',roboflowWorkflowId:'custom-ocr'};
+$http.request=function(r){r.handler({response:{statusCode:403},data:{error_type:'ClientCausedStepExecutionError',blocks_errors:[{block_id:'model'}],message:'Forbidden fixture-key'}});};
+service.ocr({image:png},function(p){check(p.error.type==='api'&&p.error.addition.statusCode===403&&p.error.message.includes('付费工作区')&&!p.error.message.includes('fixture-key'));});
+if(passed!==10)throw Error('Expected 10 assertions; got '+passed);
 """#)
 if failed {exit(1)}
-print("JavaScriptCore 通过：4 种大模型接口、实际验证回调、Azure 轮询/坐标、Mistral 与本地解析，共 9 项。")
+print("JavaScriptCore 通过：4 种大模型接口、实际验证回调、Azure 轮询/坐标、Mistral、本地解析与 Roboflow 步骤错误，共 10 项。")

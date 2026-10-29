@@ -113,6 +113,72 @@ test("Roboflow Workflow always sends the current screenshot as Base64", () => {
   assert.equal(p.requests[0].body.inputs.image.value, q.value.image.toBase64());
 });
 
+test("Roboflow model-step 403 reports the workflow failure without blaming a valid key", () => {
+  const options = {
+    serviceMode: "roboflow",
+    roboflowApiKey: "fixture-key",
+    roboflowWorkflowId: "gpt-6-1-terra-ocr",
+  };
+  const saved = JSON.stringify(options);
+  const p = load(options, {
+    request(r) {
+      r.handler(ok({
+        message: "Forbidden error occurred while execution of step model fixture-key",
+        error_type: "ClientCausedStepExecutionError",
+        inner_error_type: "RoboflowAPIForbiddenError",
+        context: "workflow_execution | step_execution",
+        blocks_errors: [{ block_id: "model" }],
+      }, 403));
+    },
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  const e = q.completions[0].error;
+  assert.equal(e.type, "api");
+  assert.equal(e.addition.statusCode, 403);
+  assert.match(e.message, /model/);
+  assert.match(e.message, /付费工作区/);
+  assert.doesNotMatch(e.message, /资源类型|Endpoint|fixture-key/);
+  assert.equal(p.requests.length, 1);
+  assert.equal(p.requests[0].body.api_key, "fixture-key");
+  assert.equal(p.requests[0].url, "https://serverless.roboflow.com/ashers-workspace-u0hh3/workflows/gpt-6-1-terra-ocr");
+  assert.equal(JSON.stringify(options), saved);
+});
+
+test("Roboflow's explicit managed-OpenAI plan denial becomes an actionable message", () => {
+  const p = load({
+    serviceMode: "roboflow",
+    roboflowApiKey: "fixture-key",
+    roboflowWorkflowId: "custom-ocr",
+  }, {
+    request(r) {
+      r.handler(ok({ error: "Roboflow-managed OpenAI API keys are only available to workspaces on a paid plan. Provide your own OpenAI API key, or upgrade your plan." }, 403));
+    },
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.equal(q.completions[0].error.type, "api");
+  assert.match(q.completions[0].error.message, /付费工作区/);
+  assert.match(q.completions[0].error.message, /自己的 OpenAI Key/);
+  assert.equal(p.requests.length, 1);
+});
+
+test("a Roboflow entry authentication failure remains distinct from a model-step denial", () => {
+  const p = load({
+    serviceMode: "roboflow",
+    roboflowApiKey: "fixture-key",
+    roboflowWorkflowId: "custom-ocr",
+  }, {
+    request(r) { r.handler(ok({ message: "Invalid API key fixture-key" }, 401)); },
+  });
+  const q = query();
+  p.ocr(q.value, q.done);
+  assert.equal(q.completions[0].error.type, "secretKey");
+  assert.match(q.completions[0].error.message, /Roboflow/);
+  assert.doesNotMatch(q.completions[0].error.message, /付费工作区|资源类型|fixture-key/);
+  assert.equal(p.requests.length, 1);
+});
+
 test("OpenDocRouter sends sync, cache false, layout false and base64 document", () => {
   const p = load({
     serviceMode: "openDocRouter",

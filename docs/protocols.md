@@ -24,6 +24,14 @@ Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用
 
 总超时覆盖图片提交、轮询及下载。生成/提交请求不盲目重发；百度仅在明确拒绝模型参数时按原策略换模型。取消信号由宿主提供时使用；Bob 当前 OCR query 文档未承诺所有入口都提供取消信号，因此每条路径另有截止时间保证结束。
 
+## Roboflow Workflow 的模型步骤授权
+
+Workspace 认证成功、可以读取 Workflow，与内部模型步骤获准执行是两道检查。`ClientCausedStepExecutionError` 加 `RoboflowAPIForbiddenError` 表示 Workflow 中某个步骤被平台拒绝，不能据此直接断言 Private API Key 无效。插件保留失败步骤与 HTTP 状态，提示核对模型权限和套餐；只有上游明确返回付费计划限制时才断言该限制是原因。
+
+实测已确认：同一有效 Key 的工作区查询、Workflow 定义查询及额度检查均为 HTTP 200，而托管 OpenAI 代理返回 HTTP 403，并明确要求 paid plan。官方 OpenAI Workflow block 的 `api_key` 默认是 `rf_key:account`，因此未额外填写 OpenAI Key 时走 Roboflow 托管计费。可以在 Workflow 模型步骤提供自己的 OpenAI Key；此选择会改为用户的 OpenAI 账户计费，需要由用户自行决定。插件请求不增加备用 Key、自动换供应商或额外计费重试。
+
+官方 SDK 的 `use_cache=True` 缓存的是 Workflow 定义，不能解除模型授权限制；加入相同字段的对照请求同样返回上述 403。
+
 ## 本次验证
 
 - 旧版 5 个故障回归均失败；新实现修复 URL query、长行截断、异常结束、字面标签和无效验证路径。
@@ -35,6 +43,8 @@ Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用
 
 ## 官方依据
 
+- [Roboflow Workflow SDK 与定义缓存](https://docs.roboflow.com/reference/inference/inference-sdk/workflows)
+- [Roboflow OpenAI block 的托管 Key 默认值与代理路径](https://github.com/roboflow/inference/blob/9d75f3baf45647a7d164a595af5fba2666b4f26c/workflows/roboflow_workflows/core_steps/models/foundation/openai/v7.py)
 - [Microsoft Analyze Document](https://learn.microsoft.com/en-us/rest/api/aiservices/document-models/analyze-document?view=rest-aiservices-v4.0%20(2024-11-30))
 - [Document Intelligence Read](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/prebuilt/read?view=doc-intel-4.0.0)
 - [Mistral OCR 4.1](https://docs.mistral.ai/models/ocr-4-1) · [OCR API](https://docs.mistral.ai/api/endpoint/ocr) · [结构块与表格](https://docs.mistral.ai/studio/document-processing/basic_ocr)

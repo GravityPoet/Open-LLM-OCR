@@ -2,7 +2,12 @@
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
-## 0.5.2 Roboflow OCR 入口兼容修复
+## 0.5.3 Roboflow Workflow 错误提示修复
+
+- 区分 Workflow 入口认证失败与模型步骤的 HTTP 403，不再把模型步骤的权限或套餐限制统一报告为密钥错误。
+- Roboflow 托管的 OpenAI Key 仅向符合要求的付费工作区开放；可在 Workflow 模型步骤配置自己的 OpenAI Key，改由 OpenAI 账户计费。
+
+## Roboflow OCR 统一入口
 
 - 合并为一个“Roboflow OCR（自定义模型 / Workflow）”服务项；旧 GLM-OCR 固定路径保留代码兼容。
 - Workspace 固定为当前项目工作区，不在客户设置中显示。
@@ -30,7 +35,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - **真实验证**：点击“验证”会识别一张内置公开样例，检查实际文字，可能产生一次识别费用。
 - **本地服务**：默认端口统一为 **50000**；内存解码，减少磁盘写入；繁忙时明确返回 503；Relay 不再记录签名下载 URL，并限制下载大小和重定向。
 
-源码与本机候选为 **0.5.2**；用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
+用户安装入口始终使用 [GitHub Releases 最新版本](https://github.com/GravityPoet/Open-LLM-OCR/releases/latest)，不会固定到仓库中的某一份包。
 
 ## 安装与选择
 
@@ -86,6 +91,8 @@ API Key：你的 Roboflow Private API Key
 
 填写 `glm-ocr` 时调用 Roboflow 托管的 GLM-OCR 原生接口；填写其他名称时调用固定工作区的 Workflow Endpoint，并发送 `{ api_key, inputs: { image: { type: "base64", value } } }`。因此智谱 GLM-OCR 和你自己部署的模型共用一个设置入口，但底层协议会按名称选择正确路径。
 
+如果 Workflow 的 `model` 步骤返回 HTTP 403，即使 Private API Key 有效、可读取工作区，也可能是内部模型授权被拒绝。实测 Roboflow 的 OpenAI 代理会在工作区不满足套餐要求时返回 “Roboflow-managed OpenAI API keys are only available to workspaces on a paid plan”。拥有赠送 credits 不等于已开放这个托管模型通道。可在 Roboflow 的 Workflow 编辑器为模型步骤配置自己的 OpenAI Key，或使用符合平台要求的付费工作区。插件不自动改变计费方式，也不自动重试此类失败。
+
 ### OpenDocRouter OCR
 
 选择“OpenDocRouter OCR”，填写 `https://www.opendocrouter.ai` 和 API Key。插件调用 `/v1/parse`，默认 `llamaindex/ocria-1`，可在设置中替换模型名称，固定使用 `mode=sync`、`cache=false`、`layout=false`；图片直接 Base64 发送，PDF 使用 `application/pdf` 并按“最大页数”发送 `pages: "1-N"`。
@@ -121,7 +128,7 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 
 ## English
 
-Version 0.5.2 keeps the unified Roboflow entry compatible with the legacy `roboflow` service value. Enter `glm-ocr` for the hosted model or another Workflow ID for a deployed model; legacy GLM-OCR settings remain compatible.
+Version 0.5.3 distinguishes Roboflow Workflow authentication errors from model-step authorization failures. A Roboflow-managed OpenAI key requires an eligible paid workspace; otherwise configure your own OpenAI key in the Workflow model step. No billing mode is changed automatically and no extra diagnostic inference is sent by the plugin.
 
 Validation performs actual OCR on a bundled synthetic sample. Requests share one deadline, report truncation and failure explicitly, and preserve whitespace, code and long text. PaddleOCR-VL uses its documented image-first task prompt. The local server now defaults to port 50000, decodes in memory and rejects busy work; the optional Baidu relay validates destinations and redirects, bounds response size and omits signed URLs from logs.
 

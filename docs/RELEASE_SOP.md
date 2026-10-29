@@ -28,6 +28,7 @@
 | Bob 文件选择后版本未变化 | 选择 `.bobplugin` 后列表仍显示 0.3.0 | 文件选择流程没有完成升级，不能只凭对话框关闭判定安装成功 | 用 Bob 的“检查更新”读取 appcast；必须看到“更新成功”和插件列表 0.4.0，再逐文件比对安装目录 |
 | 统一 Roboflow 后仍出现两个包 | 构建脚本仍把旧 `Open-LLM-OCR-Roboflow.bobplugin` 列入发布循环，导致新客户同时看到固定 GLM-OCR 和自定义 Workflow | 将 GLM-OCR 路径合并到统一 Roboflow 设置：填 `glm-ocr` 走 `/infer/lmm`，其他 ID 走固定工作区 Workflow；旧 `serviceMode=roboflow` 只保留代码兼容；发布循环只允许五个正式包 | 每次发版检查仓库根目录和 Release 资产均不存在旧 Roboflow 包，并用统一入口的两条协议回归测试 |
 | Release tag 与版本源不一致 | 版本修改留在工作树未暂存，构建包为 0.5.1 但 tag 提交中的 `info.json` 仍为 0.5.0 | 版本 bump 后同时回读 `package.json`、`info.json`、包内 `info.json` 和 `git show HEAD:info.json`；只从干净提交创建 tag；不移动已发布 tag，递增版本修正 | 发布前要求工作树干净、版本源一致、包 provenance 与提交 SHA 一致 |
+| Roboflow 模型步骤 403 被误报为用户 Key 错误 | 工作区、Workflow 定义和额度检查均 200；插件等价请求与官方 SDK 等价请求均在 `model` 步骤 403；直接查询 OpenAI 代理返回托管 Key 仅限 paid plan | 在 Workflow 适配器区分入口认证失败和 `ClientCausedStepExecutionError`；保留失败步骤，条件提示托管 OpenAI 的套餐限制；仅上游明确返回 paid plan 时确认这一原因 | 用真实响应结构回归，保留密钥脱敏、单次完成、无额外推理或自动重试；不把离线测试或有效 Key 当成模型执行成功 |
 
 ## 0.4.6 发布记录
 
@@ -45,3 +46,12 @@
 - 兼容修复：标准插件的统一 Roboflow 菜单继续使用历史 `serviceMode=roboflow` 值；空模型默认 GLM-OCR，自定义 ID 才走 Workflow，避免升级后 Bob 下拉框与真实运行服务不一致。
 - 候选包 SHA256：标准 `0dae633ad9a4d863265eb31255b18a2afac9043c7b77e7e37cd8b52215ae0d3a`；Azure `234c5c12d18c69da2bf68919643da44e88b42dd05a760128861055e75fddcae1`；Mistral `db8ac313cdc523272149ce70a37072c1cbd29a9a6b9387d219cd1367f8abe274`；统一 Roboflow `3aad8391f5f19bf566744ad3e4e0f77a1b471094c52ed80545d195eff8f0765c`；OpenDocRouter `29d369b00dda2a2ba47bff0893d772857bd59d3d202c85bde2564dd4671370d7`。
 - 验证：`npm run verify` 通过（73 个 Node 测试、10 个 Python 测试、五个包字节一致）；`swift tests/jscore-smoke.swift .` 通过 9 项。
+
+## 0.5.3 发布范围与验收
+
+- 修复 Roboflow Workflow 的 401/403 提示与分类，区分入口 Key 认证和内部模型权限、套餐限制；保留原始 HTTP 状态和失败步骤，继续脱敏。
+- 请求契约、模型选择与计费方式不变；不自动更换供应商、不增加后台诊断请求或付费重试。
+- 真实定位已复现上游 403；托管 OpenAI 的执行仍被平台套餐限制，不能将报错提示修复声明为云端识别恢复。客户可自行在 Workflow 模型步骤配置 OpenAI Key，或使用符合平台要求的付费工作区。
+- 发布包为标准、Azure、Mistral、统一 Roboflow、OpenDocRouter 五种 `.bobplugin`；Bob 宿主 App 和签名不变。
+- 源码验证与五个包的一致性检查、JavaScriptCore 以及提交后的 CI 全部通过后才发布。标准更新源在公开资产下载并逐一校验后更新。
+- 本地验收：`npm run verify` 通过 76 个 Node 测试、10 个 Python 测试和五包字节比对；`swift tests/jscore-smoke.swift .` 通过 10 项，其中包含 Roboflow 步骤 403 与密钥脱敏。
