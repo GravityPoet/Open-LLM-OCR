@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.6.1",
+      "desc": "0.6.1：恢复 PP-OCR 可测量的代码缩进；默认指令实际预填；隔离微软 / Mistral 与视觉大模型参数，明确字段适用范围。默认仍为 GLM-OCR。",
+      "sha256": "5c2e44faf153c9b7bdd2e2c41039a3cd393045412812959de4209f5bbf3598a9",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.6.1/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793246950000
+    },
+    {
       "version": "0.6.0",
       "desc": "0.6.0：Roboflow 单一入口与模型菜单，默认 GLM-OCR；增加 PP-OCR / Qwen 原生调用，共用一把 Key；升级逐字识别指令，优化已验证 DeepSeek OCR 请求。",
       "sha256": "2af97a43e5a0c492b073bb271b65d5f79bf99f875d10c52b62b12b25ba961490",
