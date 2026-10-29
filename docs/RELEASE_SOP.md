@@ -127,3 +127,11 @@
 - OpenDocRouter 由 `layout=false` 改为 `layout=true`，保留 `sync`、`cache=false`；布局字段可能增加少量响应和费用，必须在请求回归中核对。
 - GLM-OCR、通用视觉模型、Qwen 和自定义 Workflow 仍不得声明坐标支持；不能用文本长度或行号猜测图片位置。
 - 门禁至少覆盖：Bob 归一化四点、Mistral block 坐标、PP-OCR 预测框合并、OpenDocRouter layout 元素行范围、多页隔离、缺坐标回退、原图翻译服务能力矩阵；完成后再打包、安装和发布。
+
+## 0.6.3 发布与本机记录
+
+- 发布源码与 annotated tag：`736b8bbce05b065e9b2b43609d197061018e0491` / `v0.6.3`；CI `40920701665` 的 `verify` 与 `jscore` 均成功。
+- Release `428183209` 于 2026-10-29 UTC 发布并确认为 latest；五个 `.bobplugin` 和 `SHA256SUMS` 六个公开下载均逐字节及 SHA256 核对。标准包 SHA256：`01b6f2229ba40a35b0ea8d839023e4d95840fd21a03b7fea26c67e8a63bbfb4`。
+- 本机 Bob 原生界面确认 0.6.2 → 0.6.3 安装成功；17 个安装文件与标准包一致，OCR General 配置组与安装前逐项相同。OpenDocRouter 配置界面回读为“启用布局坐标以支持原图翻译”。
+- 本轮验证通过 116 个 Node、10 个 Python、43 项 JavaScriptCore；没有新增真实付费 OCR 请求，坐标路径使用官方响应夹具和协议回归验证。Mistral、PP-OCR、OpenDocRouter 的原图坐标支持已接入；GLM/Qwen/通用视觉模型仍保持普通 OCR。
+- 六个公开资产下载校验后才将 0.6.3 写入 appcast；后续元数据提交不移动 tag、不覆盖已发布资产。本机回退可重新安装已校验的 0.6.2 包。

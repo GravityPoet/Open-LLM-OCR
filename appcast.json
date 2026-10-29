@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.6.3",
+      "desc": "0.6.3：接入 Mistral、PP-OCR 和 OpenDocRouter 的原图翻译坐标；OpenDocRouter 启用布局解析，支持 Bob boundingBox。",
+      "sha256": "01b6f2229ba40a35b0ea8d8390234e4d95840fd21a03b7fea26c67e8a63bbfb4",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.6.3/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.20.0",
+      "timestamp": 1793294965000
+    },
+    {
       "version": "0.6.2",
       "desc": "0.6.2：修复 OpenDocRouter 多行 HTML 表格标签残留和代码缩进丢失；保留表格列、代码注释、Tab 与字面标签，移除模型添加的代码围栏。",
       "sha256": "e9102c957f642e52f57fa168b5870f02f0a528bac26a7e84a03763119c4f543c",
