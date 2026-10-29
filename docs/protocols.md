@@ -13,12 +13,12 @@
 | PaddleOCR-VL | Chat 兼容，图片在前，`OCR:` 在后，temperature=0 | 专用任务识别结果；普通模型不被强制设置采样参数 |
 | 本地 Paddle | POST `/ocr`，file Base64 | 有效 ocrResults / rec_texts |
 | 百度 jobs（旧配置兼容，标准设置已隐藏） | multipart 提交、轮询、下载 JSONL | done + 全部结果解析；不把任务提交当作识别成功 |
-| Roboflow OCR（统一入口） | 输入 `glm-ocr` 时 POST `/infer/lmm`；其他模型/Workflow ID POST `/<workspace>/workflows/<workflow-id>`；分别按官方协议携带 Private Key；始终 Base64 image | 统一转换为 Bob OCR 文本；不保存公共图床 URL |
+| Roboflow OCR（统一入口） | 默认 GLM-OCR；GLM / Qwen3-VL POST `/infer/lmm`，PP-OCR POST `/ocr/pp-ocr`，Qwen3.5 使用模型路径；自定义 Workflow POST `/<workspace>/workflows/<workflow-id>`；共用 Private Key、始终 Base64 image | 统一转换为 Bob OCR 文本；不保存公共图床 URL |
 | OpenDocRouter | POST `/v1/parse`，Bearer API Key，`mode=sync`、`cache=false`、`layout=false`，Base64 document | 200 仍需检查整体 `status` 和 `pages[].status`；页级 `error.code/message` 原样归纳后返回，不把失败页当成空 OCR |
 
 Mistral 最新稳定 OCR 为 4.1；latest 可随官方更新，固定版本用于复现。插件请求 inline Markdown 表格，关闭图片 Base64 回传以缩小响应。不调用批处理、上传持久文件或生成额外批量任务。
 
-OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 统一入口不预填模型名：填 `glm-ocr` 使用托管模型，填其他 ID 使用固定工作区的 Workflow。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
+OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 统一入口默认选择 GLM-OCR；其他原生模型直接从下拉框选择。只有选择“自定义模型 / Workflow”才使用下方 ID；旧版本尚未保存菜单时兼容读取旧 ID。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
 
 Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用。Mistral 返回段落级结构块；保留文本和可用坐标，但不把段落框冒称行级定位精度。多页响应不把不同页坐标覆盖到同一截图。
 
@@ -51,3 +51,9 @@ Workspace 认证成功、可以读取 Workflow，与内部模型步骤获准执�
 - [PaddleOCR-VL vLLM 官方任务格式](https://github.com/vllm-project/recipes/blob/main/PaddlePaddle/PaddleOCR-VL.md)
 - [PaddleOCR 输入契约](https://www.paddleocr.ai/main/en/version3.x/pipeline_usage/OCR.html)
 - [Bob OCR](https://bobtranslate.com/plugin/quickstart/ocr.html) · [OCR 结果与坐标](https://bobtranslate.com/plugin/object/ocrresult.html) · [网络与取消](https://bobtranslate.com/plugin/api/http.html)
+
+## Roboflow 原生模型菜单（0.6.0）
+
+一个 Roboflow 服务和一把 Private API Key；默认 `glm-ocr`。PP-OCR 三档分别发送 `pp_ocr_version_id=tiny-tiny/small-small/medium-medium`，读取 `result`；GLM-OCR 和 Qwen 读取 `response`。Qwen3.5 使用 `/infer/lmm/qwen3_5-<size>` 路径和 `enable_thinking=false`，其余 LMM 使用 `/infer/lmm`。所有内置模型直接发送当前截图 Base64，凭据仅在 Bearer 请求头中。自定义 Workflow 使用原有请求体认证，不与原生模型混用。
+
+显式菜单选择优先于保留的旧 Workflow 字段；新菜单缺失时兼容读取旧 ID。非法菜单值或 Workflow 路径在发请求前拒绝；不会自动重试、创建工作流或切换计费方式。

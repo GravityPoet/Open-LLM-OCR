@@ -56,3 +56,13 @@
 - 源码验证与五个包的一致性检查、JavaScriptCore 以及提交后的 CI 全部通过后才发布。标准更新源在公开资产下载并逐一校验后更新。
 - 本地验收：`npm run verify` 通过 76 个 Node 测试、10 个 Python 测试和五包字节比对；`swift tests/jscore-smoke.swift .` 通过 10 项，其中包含 Roboflow 步骤 403 与密钥脱敏。
 - 发布候选：`63f679717bbfcbf4e47ddf3328cb98165137cc7e`，annotated tag `v0.5.3`；CI `40795302348` 的 `verify` 和 `jscore` 均成功。五个公开下载包与随附 SHA256 清单已逐一校验，标准包 SHA256 为 `4326a83f8f2c87538afd9477280030242a59018663dea36a1fc11ef1b438757d`。
+
+## 0.6.0 发布范围与门禁
+
+- 单一 Roboflow 服务，默认 GLM-OCR，增加八个已实测原生模型配置的下拉选项；同一 Key 分别遵守原生 Bearer 与 Workflow 请求体认证。自定义 Workflow 作为同一菜单的可选项。
+- 通用视觉指令补强逐字转录、符号与表格要求；旧默认升级、自定义不覆盖，专用 OCR 任务不被长提示替换。
+- 新增模型原生路径、PP-OCR 结果字段、菜单选择优先级、旧配置与非法路径回归；发布前真实调用最终适配器中的全部八个内置选项，并在每次调用前确认免费额度未超限。
+- 版本文件、包内版本、提交中版本必须一致；标准与四种精简包均包含新版原生模型支持，旧重复 Roboflow 包仍禁止发布。Bob 宿主 App、签名及其他服务选择不变。
+- 本轮读取 `gh api repos/GravityPoet/Open-LLM-OCR/releases/latest` 曾遇到 `net/http: TLS handshake timeout`；它是请求未完成，不能据此判定 Release 不存在。发布写入前重新读取精确远端、tag 与 Release，成功后再继续，不盲目重复创建。
+- 本地验证通过：`npm run verify` 的 91 个 Node 测试、10 个 Python 测试和五包字节比对；`swift tests/jscore-smoke.swift .` 的 28 项检查。最终适配器的八个原生选项均返回 HTTP 200，同一张中英文合成图的预期文字全部匹配（忽略空白）；每次识别前额度检查均确认 underCap=true。
+- 联调传输出现一次 Node `fetch` 网络失败及一次额度查询连接失败；未收到模型错误响应，不能推断 Key 或协议错误。只读连通性检查与 Python HTTPS 查询返回 200 后，使用同一插件代码生成的请求经 Python 标准库传输完成八项验证；保留原失败记录。产品代码不增加网络重试、不修改系统代理或证书校验。

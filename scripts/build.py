@@ -9,9 +9,9 @@ def archive(profile: str = "standard") -> bytes:
     if profile in ("azure", "mistral", "roboflowWorkflow", "openDocRouter"):
         info['identifier'] += '.' + profile
         info['name'] = 'Open-LLM-OCR · ' + {'azure':'微软 OCR','mistral':'Mistral OCR','roboflowWorkflow':'Roboflow OCR','openDocRouter':'OpenDocRouter OCR'}[profile]
-        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflowWorkflow':'Roboflow 自定义模型与 Workflow OCR','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
+        info['summary'] = {'azure':'Azure Document Intelligence Read','mistral':'Mistral OCR 4.1 与最新模型','roboflowWorkflow':'Roboflow OCR · GLM-OCR / PP-OCR / Qwen','openDocRouter':'OpenDocRouter OCR · ocria-1'}.get(profile, info['summary'])
         info.pop('appcast', None)
-        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowApiKey','roboflowWorkflowId','requestTimeoutSec') if profile == 'roboflowWorkflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
+        info['options'] = [dict(o) for o in info['options'] if o['identifier'] in (('cloudBaseUrl', 'cloudApiKey', 'requestTimeoutSec') if profile == 'azure' else ('cloudBaseUrl', 'cloudApiKey', 'mistralModel', 'cloudModel', 'requestTimeoutSec') if profile == 'mistral' else ('roboflowApiKey','roboflowModel','roboflowWorkflowId','requestTimeoutSec') if profile == 'roboflowWorkflow' else ('openDocRouterBaseUrl','openDocRouterApiKey','openDocRouterModel','openDocRouterMaxPages','requestTimeoutSec'))]
         for option in info['options']:
             if option['identifier'] == 'cloudBaseUrl':
                 option.update(title='Azure Endpoint' if profile == 'azure' else 'Mistral Endpoint', defaultValue=option['defaultValue'] if profile == 'azure' else 'https://api.mistral.ai/v1', desc='当前服务的接口地址。')
