@@ -67,3 +67,7 @@ Workspace 认证成功、可以读取 Workflow，与内部模型步骤获准执�
 PP-OCR 的 `result` 可能已丢掉行首空白，但同一响应的 `predictions` 保留文字位置。插件在坐标、行文本匹配和 ASCII 字符间距足够一致时，仅恢复可测量的行首缩进；保留原识别字符、已有缩进及重复行。非法或缺失几何信息直接使用原文本，不增加 API 调用。
 
 GLM 的相似字符差异已在原始 `response` 中复现。官方 Text Recognition、短精准转录提示、结构化抽取、纯色白边裁除均未形成可靠改善；结构化抽取遗漏正文、裁边增加字符差异，因此均未进入生产。测试字体中 en dash 与 em dash 的轮廓相同，不能仅凭图片唯一还原编码。保留原图、参考文本和严格统计规则，不通过替换已知字符制造测试通过。
+
+## 原生 OCR 参数隔离（0.6.1）
+
+微软 Document Intelligence 请求体仅含 `base64Source`，不发送大模型提示词；Mistral 原生请求也不发送该指令。两者不读取或校验 `cloudPrompt`、`cloudImageDetail`、`cloudProtocol`。这些字段仅在 `providerCloud` 模式使用；通用请求超时、Key 和本服务模型校验保持有效。界面连接字段共用以保留旧配置，但明确标出视觉大模型专用参数。
