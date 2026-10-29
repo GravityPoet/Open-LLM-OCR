@@ -2,6 +2,14 @@
 
 Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document Intelligence、Mistral OCR、Roboflow OCR、OpenDocRouter OCR 和百度异步 OCR。插件免费，云端费用与权限由服务商决定。
 
+## 0.6.1 缩进与默认指令显示
+
+- PP-OCR 使用同一次响应中的文字坐标恢复可辨认的水平缩进；保留原识别字符、重复行和已有空白，缺少有效坐标时保留原结果，不增加识别请求。
+- 默认识别指令直接预填在输入框中，可见并可编辑；已有自定义内容保留。通用指令与 GLM-OCR / PaddleOCR-VL 的专用任务格式继续分开处理。
+- Roboflow 仍为一个入口、一把 Private API Key，默认 GLM-OCR。
+- 同样两张合成图各三次：PP-OCR Medium 代码缩进保留从 0/3 改善为 3/3，中位耗时约 1.96 → 1.88 秒。GLM-OCR 中位耗时约 3.25 → 3.40 秒；网络和模型服务负载会产生波动。
+- **已知字符限制**：两者忽略空白的整图完全一致次数仍为 3/6。GLM 原始模型响应仍会混淆部分相似符号；任务提示、结构化提取和去白边实验没有得到可靠改善，因此未加入默认调用。不会根据上下文猜测替换字符；这些样例结果不代表通用准确率。
+
 ## 0.6.0 模型选择与逐字识别
 
 - Roboflow 保持一个入口、一把 Private API Key，模型下拉框默认 **GLM-OCR**；选择后直接识别当前截图，不需要先创建 Workflow。
@@ -126,6 +134,11 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 `main.js` 只暴露 Bob 入口；`lib/` 按配置、生命周期、图片、结果与服务商分工。归档可重复构建，`--check` 比对源码与包字节。测试不使用真实凭据；`scripts/live-smoke.cjs` 只有在显式从 stdin 提供配置后才发送合成图片。
 
 ## English
+
+Version 0.6.1 restores observable PP-OCR indentation from the coordinates already returned with the same response, without extra inference calls or character replacement. Invalid geometry falls back to the original result. Default transcription instructions are prefilled and editable, while custom instructions remain intact. Roboflow retains one entry, one Private API Key, and GLM-OCR as its default.
+
+On the same two synthetic images with three trials each, PP-OCR Medium preserved code indentation in 3/3 trials, up from 0/3, with median total latency around 1.88 seconds versus 1.96 seconds. GLM-OCR remained around 3.40 seconds versus 3.25 seconds. Full-page character equality ignoring whitespace remains 3/6 for both models. Similar-glyph recognition errors remain in GLM's upstream output; prompt, structured-extraction, and blank-margin experiments did not produce a reliable improvement and were not promoted. Network and upstream load affect timings.
+
 
 Version 0.6.0 keeps one Roboflow entry and one Private API Key. The model menu defaults to GLM-OCR and also supports PP-OCR Small/Tiny/Medium, Qwen3-VL 2B, and Qwen3.5 0.8B/2B/4B through their native endpoints. Custom Workflows remain an option in the same menu. Base64 screenshots and output extraction are automatic; no companion app is required. Legacy Workflow IDs remain stored; after upgrading, choose Custom Workflow to keep using one. The new menu defaults to GLM-OCR.
 
