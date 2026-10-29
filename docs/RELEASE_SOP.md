@@ -71,3 +71,5 @@
 - 本机文件选择器的“前往”路径未成功定位 Documents 中的安装包，保持旧安装不动；使用经过 SHA 校验的 Downloads 候选副本从原生文件列表选择，安装后核对版本与全部文件字节。未完成选择不能冒称安装成功。
 - GitHub CLI 多次 TLS handshake timeout，但同一已登录账号通过 Python 标准库 HTTPS 的 GitHub REST 查询成功。必要时按官方 REST 完成同一仓库的 Release / 资产操作；凭据仅在内存中使用，不修改系统代理或 TLS 校验。写入未知结果先回读再重试。
 - 最终追加验证通过：94 个 Node 测试、10 个 Python 测试、32 项 JavaScriptCore 检查；五包重新构建后逐字节一致。五个云端模型基线共 30 次请求全部返回可解析 OCR 文字；两个 DeepSeek 的关闭思考组各 6 次也全部成功，字符差异总数分别由 14/16 降为 9/9（各比较 741 个非空白字符）。性能测量包括网络等待，不据此承诺固定响应时间。
+- Bob 运行态核对发现当前 OCR 服务保存在 `Preference_ocrGeneralServiceInfos`；旧 `Preference_ocrServiceInfos` 可与界面不一致。备份、昵称、模型与密钥保留检查必须对照当前界面与 General 组，不能仅凭旧数组判定用户改动。两组本次 Roboflow Key 比对一致，原 API 实测仍有效；已补建当前 General 组的受保护恢复快照，旧域未写入。
+- Bob 为新增菜单提供默认显示值；旧 Workflow ID 会保留在可选字段中。公开说明改为“默认 GLM-OCR；继续使用旧工作流时选择自定义”，不把底层缺失字段兼容测试冒称宿主菜单迁移验证。

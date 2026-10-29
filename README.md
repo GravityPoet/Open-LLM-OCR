@@ -9,7 +9,7 @@ Bob 图片识别插件：本地 PaddleOCR、视觉大模型、微软 Document In
 - 自定义 Workflow 保留在同一个模型下拉框中，仅该选项需要填写下方的 Workflow ID；不显示工作区、图片 URL 或输出路径设置。
 - 通用视觉模型默认按原文逐字转录，明确禁止纠错、润色和补全，表格列间使用制表符。旧默认指令自动升级，用户自定义指令保留；PaddleOCR-VL 仍使用专用 `OCR:`，GLM-OCR 使用 `OCR`，PP-OCR 不发送聊天提示词。
 - 默认逐字 OCR 指令下，OpenRouter / Fireworks 的指定 DeepSeek V4.1 Flash 1017 模型关闭额外思考，减少输出等待和思考 token；保持图片清晰度和完整输出，自定义指令保留服务商默认行为。其他模型保留原请求参数。
-- 新模型菜单尚未保存时继续读取旧模型或 Workflow ID；用户明确选择菜单模型后，以当前选择为准。Private API Key 沿用原配置，不内置密钥。
+- 升级后请确认模型菜单：默认是 GLM-OCR；旧 Workflow ID 仍保留，继续使用工作流时选择“自定义模型 / Workflow”。当前菜单选择优先。Private API Key 沿用原配置，不内置密钥。
 - Workflow 入口认证与模型步骤权限错误继续分别提示；插件不会自动切换供应商、改变计费方式或重试收费请求。
 
 ## 0.4.6 修复
@@ -85,7 +85,7 @@ Computer Vision、Translator 与 Document Intelligence 是不同 API。Key 看�
 | Qwen3.5 0.8B / 2B / 4B | `/infer/lmm/<model>` | 按模型专用路径调用；4B 的一次实测明显较慢 |
 | 自定义模型 / Workflow | `/<workspace>/workflows/<id>` | 仅此项需要填写下方 Workflow ID；沿用项目工作区 |
 
-内置模型直接调用 Roboflow 原生接口，以 Bearer 方式认证；Workflow 按官方契约在请求体发送 `api_key`。图片始终为当前截图的 Base64，结果自动提取。旧版本尚未保存新菜单时，原有模型或 Workflow ID 继续有效；从菜单选择具体模型后，下方旧的自定义值不会覆盖选择。
+内置模型直接调用 Roboflow 原生接口，以 Bearer 方式认证；Workflow 按官方契约在请求体发送 `api_key`。图片始终为当前截图的 Base64，结果自动提取。旧 Workflow ID 仍保留；升级后若继续使用工作流，请选择“自定义模型 / Workflow”。选择具体模型后，下方保留的自定义值不会覆盖选择。
 
 如果 Workflow 的 `model` 步骤返回 HTTP 403，即使 Private API Key 有效、可读取工作区，也可能是内部模型授权被拒绝。实测 Roboflow 的 OpenAI 代理会在工作区不满足套餐要求时返回 “Roboflow-managed OpenAI API keys are only available to workspaces on a paid plan”。拥有赠送 credits 不等于已开放这个托管模型通道。可在 Roboflow 的 Workflow 编辑器为模型步骤配置自己的 OpenAI Key，或使用符合平台要求的付费工作区。插件不自动改变计费方式，也不自动重试此类失败。
 
@@ -127,7 +127,7 @@ swift tests/jscore-smoke.swift .  # macOS JavaScriptCore
 
 ## English
 
-Version 0.6.0 keeps one Roboflow entry and one Private API Key. The model menu defaults to GLM-OCR and also supports PP-OCR Small/Tiny/Medium, Qwen3-VL 2B, and Qwen3.5 0.8B/2B/4B through their native endpoints. Custom Workflows remain an option in the same menu. Base64 screenshots and output extraction are automatic; no companion app is required. Legacy IDs remain readable until a new model selection is saved.
+Version 0.6.0 keeps one Roboflow entry and one Private API Key. The model menu defaults to GLM-OCR and also supports PP-OCR Small/Tiny/Medium, Qwen3-VL 2B, and Qwen3.5 0.8B/2B/4B through their native endpoints. Custom Workflows remain an option in the same menu. Base64 screenshots and output extraction are automatic; no companion app is required. Legacy Workflow IDs remain stored; after upgrading, choose Custom Workflow to keep using one. The new menu defaults to GLM-OCR.
 
 For the default transcription instruction, the verified OpenRouter and Fireworks DeepSeek V4.1 Flash 1017 routes disable optional reasoning without changing image detail or output limits. Custom instructions and unverified models retain provider defaults; other models retain their original request parameters.
 

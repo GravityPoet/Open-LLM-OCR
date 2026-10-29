@@ -18,7 +18,7 @@
 
 Mistral 最新稳定 OCR 为 4.1；latest 可随官方更新，固定版本用于复现。插件请求 inline Markdown 表格，关闭图片 Base64 回传以缩小响应。不调用批处理、上传持久文件或生成额外批量任务。
 
-OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 统一入口默认选择 GLM-OCR；其他原生模型直接从下拉框选择。只有选择“自定义模型 / Workflow”才使用下方 ID；旧版本尚未保存菜单时兼容读取旧 ID。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
+OpenDocRouter 默认模型为 `llamaindex/ocria-1`，模型名可在设置中替换；图片 inline 请求约 3 MB 限制，PDF 使用配置的 1–200 页范围。Roboflow 统一入口默认选择 GLM-OCR；其他原生模型直接从下拉框选择。只有选择“自定义模型 / Workflow”才使用下方 ID；旧 Workflow ID 保留，升级后需从新菜单选择自定义以继续使用。两家都要求用户分别提供对应 API Key，不共用已有视觉服务 Key。
 
 Azure 图片坐标转换为 Bob 的 `[0,1]` 四点坐标，供原图翻译使用。Mistral 返回段落级结构块；保留文本和可用坐标，但不把段落框冒称行级定位精度。多页响应不把不同页坐标覆盖到同一截图。
 
@@ -56,7 +56,7 @@ Workspace 认证成功、可以读取 Workflow，与内部模型步骤获准执�
 
 一个 Roboflow 服务和一把 Private API Key；默认 `glm-ocr`。PP-OCR 三档分别发送 `pp_ocr_version_id=tiny-tiny/small-small/medium-medium`，读取 `result`；GLM-OCR 和 Qwen 读取 `response`。Qwen3.5 使用 `/infer/lmm/qwen3_5-<size>` 路径和 `enable_thinking=false`，其余 LMM 使用 `/infer/lmm`。所有内置模型直接发送当前截图 Base64，凭据仅在 Bearer 请求头中。自定义 Workflow 使用原有请求体认证，不与原生模型混用。
 
-显式菜单选择优先于保留的旧 Workflow 字段；新菜单缺失时兼容读取旧 ID。非法菜单值或 Workflow 路径在发请求前拒绝；不会自动重试、创建工作流或切换计费方式。
+显式菜单选择优先于保留的旧 Workflow 字段；底层旧调用仍可读取旧 ID；Bob 设置中新菜单默认 GLM-OCR，升级时须明确选择要继续使用的自定义 Workflow。非法菜单值或 Workflow 路径在发请求前拒绝；不会自动重试、创建工作流或切换计费方式。
 
 ## DeepSeek OCR 响应优化（0.6.0）
 
