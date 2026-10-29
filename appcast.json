@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.6.4",
+      "desc": "0.6.4：修正原图翻译坐标版的 Bob 最低版本门禁，包和更新源统一要求 Bob 1.20.0。",
+      "sha256": "3905b7df5f52a8dafe7a1090e294a5a177588d3b091d10dec8b27c61af666fbf",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.6.4/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.20.0",
+      "timestamp": 1793295389000
+    },
+    {
       "version": "0.6.3",
       "desc": "0.6.3：接入 Mistral、PP-OCR 和 OpenDocRouter 的原图翻译坐标；OpenDocRouter 启用布局解析，支持 Bob boundingBox。",
       "sha256": "01b6f2229ba40a35b0ea8d8390234e4d95840fd21a03b7fea26c67e8a63bbfb4",
