@@ -87,3 +87,5 @@ OpenDocRouter 的布局是服务端生成的 grounded boxes，开关与普通文
 ## OpenDocRouter 图片描述清理（0.6.5）
 
 部分 OpenDocRouter 解析配方会把头像、图片或图标生成 `[Figure: ...]`、`[图片：...]`、`[Icon]` 等 Markdown 占位符。这些不是图片中可见文字，插件在 OpenDocRouter 结果层移除明确的图片/图标描述后再交给 Bob；仍发送原图并保留 `layout=true` 的坐标。代码围栏内的同名字面文本不清理，成对 Markdown 粗体/删除线标记也只在普通 OCR 文本中去掉，避免把 OCR 结果误渲染为样式。
+
+0.6.6 兼容同一 Markdown 行返回多个布局元素的模型：只跳过已消费的重复行元素，不把其它有效布局框全部判为歧义。

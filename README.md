@@ -1,10 +1,11 @@
 # Open-LLM-OCR
 
-## 0.6.5 OpenDocRouter OCR 纯文字输出（Bob 1.20+）
+## 0.6.6 OpenDocRouter OCR 纯文字与坐标修复（Bob 1.20+）
 
 - OpenDocRouter 视觉解析模型可能把图片、头像和图标生成 `[Figure: ...]`、`[图片：...]` 或 `[Icon]` 描述；插件现在在交给 Bob 前移除这些生成的非文字占位符，只保留实际可见文字。
 - 图片仍正常发送给 OpenDocRouter，`layout=true` 和原图翻译坐标不变；代码围栏里的字面 `[Figure: ...]` / `[Icon]` 不会被误删。
 - 同时清理解析器生成的成对 Markdown 粗体/删除线标记，避免 OCR 文本被 Bob 误当成加粗；原始单个符号、代码和真实文字保留。
+- 兼容同一 Markdown 行被 OpenDocRouter 拆成多个布局元素的回包：跳过重复文本元素但保留其它有效坐标，避免整页布局回退。
 
 ## 0.6.4 原图翻译坐标支持（Bob 1.20+）
 

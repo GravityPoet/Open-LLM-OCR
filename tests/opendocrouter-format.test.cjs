@@ -53,6 +53,7 @@ test('OpenDocRouter image-description cleanup keeps layout coordinates',()=>{
     layout:{status:'ok',elements:[
       {type:'text',lines:[0,1],boxes:[{x:.1,y:.1,w:.4,h:.1}]},
       {type:'text',lines:[3,3],boxes:[{x:.1,y:.3,w:.3,h:.1}]},
+      {type:'text',lines:[3,3],boxes:[{x:.5,y:.3,w:.2,h:.1}]},
       {type:'picture',lines:null,boxes:[{x:.6,y:.1,w:.2,h:.2}]},
     ]},
   }]},{});
