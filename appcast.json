@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.5.3",
+      "desc": "0.5.3：区分 Roboflow Workflow 入口认证与模型步骤权限、套餐限制，修正误导性的密钥错误提示；请求与计费选择不变。",
+      "sha256": "4326a83f8f2c87538afd9477280030242a59018663dea36a1fc11ef1b438757d",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.5.3/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793234406258
+    },
+    {
       "version": "0.5.2",
       "desc": "0.5.2：修复统一 Roboflow 入口升级兼容，并对齐源码、版本和发布资产；保留历史 roboflow 配置值。",
       "sha256": "0dae633ad9a4d863265eb31255b18a2afac9043c7b77e7e37cd8b52215ae0d3a",

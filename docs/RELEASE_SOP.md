@@ -55,3 +55,4 @@
 - 发布包为标准、Azure、Mistral、统一 Roboflow、OpenDocRouter 五种 `.bobplugin`；Bob 宿主 App 和签名不变。
 - 源码验证与五个包的一致性检查、JavaScriptCore 以及提交后的 CI 全部通过后才发布。标准更新源在公开资产下载并逐一校验后更新。
 - 本地验收：`npm run verify` 通过 76 个 Node 测试、10 个 Python 测试和五包字节比对；`swift tests/jscore-smoke.swift .` 通过 10 项，其中包含 Roboflow 步骤 403 与密钥脱敏。
+- 发布候选：`63f679717bbfcbf4e47ddf3328cb98165137cc7e`，annotated tag `v0.5.3`；CI `40795302348` 的 `verify` 和 `jscore` 均成功。五个公开下载包与随附 SHA256 清单已逐一校验，标准包 SHA256 为 `4326a83f8f2c87538afd9477280030242a59018663dea36a1fc11ef1b438757d`。
