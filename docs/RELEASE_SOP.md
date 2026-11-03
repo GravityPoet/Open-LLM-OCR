@@ -163,3 +163,8 @@
 
 - 版本源：`0.6.6`；候选标准包 SHA256：`b4b68324df58f4dedf6a8eab7573945c6c088ef2bb412018fa91ff05366a66e1`。四个精简包由同一确定性构建生成。
 - 最终真实 Haiku 回包：HTTP 200、`layout.status=ok`、图片/图标生成描述已移除、同一行重复布局元素跳过后保留 6 个有效坐标框。
+
+## 0.6.7 发布范围与门禁
+
+- 真实 Bob 日志确认 OCR 输出本身含 `<button>Previous</button> <button>Next</button>`；0.6.7 在 OpenDocRouter 结果层剥离常见 UI 包装标签，保留可见按钮文字。表格和代码 HTML 不进入该清理规则。
+- 追加回归覆盖 OCR 普通行 UI 标签、代码围栏字面 HTML、图片描述、布局坐标和翻译插件的 CPA HTML 兜底；不得只验证翻译插件而漏掉 OCR 服务链。

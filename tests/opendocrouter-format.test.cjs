@@ -62,6 +62,13 @@ test('OpenDocRouter image-description cleanup keeps layout coordinates',()=>{
   assert.equal(output.texts[0].boundingBox.points[0].x,.1);
   assert.equal(output.texts[2].boundingBox.points[0].y,.3);
 });
+test('OpenDocRouter removes UI wrappers but keeps visible labels and code HTML',()=>{
+  const p=load();
+  const ui=p.module('special').openDocItems({pages:[{markdown:'<button>上一页</button> <span>下一页</span>'}]},{});
+  assert.deepEqual(JSON.parse(JSON.stringify(ui.map(x=>x.text))),['上一页 下一页']);
+  const code=p.module('special').openDocItems({pages:[{markdown:'```html\n<button>literal</button>\n```'}]},{});
+  assert.equal(code.map(x=>x.text).join('\n'),'<button>literal</button>');
+});
 test('already converted document text still enforces output limits and hides internal markers',()=>{
   const p=load(),result=p.module('result');
   assert.throws(()=>result.build([{text:'x'.repeat(1000001),plainText:true}],{}),/识别结果过大/);

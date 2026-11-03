@@ -2,6 +2,14 @@
   "identifier": "io.github.gravitypoet.jk.llm.ocr",
   "versions": [
     {
+      "version": "0.6.7",
+      "desc": "0.6.7：清理 OpenDocRouter OCR 误生成的 UI HTML 标签，保留按钮文字、代码、表格与原图翻译坐标。",
+      "sha256": "cc958f21985489506dc45d2ee2200c507981d603b28cfe61c908ab60861246e4",
+      "url": "https://github.com/GravityPoet/Open-LLM-OCR/releases/download/v0.6.7/Open-LLM-OCR.bobplugin",
+      "minBobVersion": "1.20.0",
+      "timestamp": 1793308200000
+    },
+    {
       "version": "0.6.6",
       "desc": "0.6.6：保留 OpenDocRouter 同行重复布局元素之外的有效坐标，修复 Haiku 原图翻译坐标回退。",
       "sha256": "b4b68324df58f4dedf6a8eab7573945c6c088ef2bb412018fa91ff05366a66e1",

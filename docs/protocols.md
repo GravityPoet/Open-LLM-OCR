@@ -84,8 +84,8 @@ OpenDocRouter Markdown 回退先区分代码围栏与正文。正文中的完整
 
 OpenDocRouter 的布局是服务端生成的 grounded boxes，开关与普通文本解析共用一个服务配置；如果布局生成失败，保留 OCR Markdown，但不伪造坐标。PP-OCR 只在预测框完整、图片尺寸有效且行匹配成功时返回行框；否则保留文字并让 Bob 使用普通 OCR。Mistral 自定义模型没有官方块坐标时不声明原图翻译能力。
 
-## OpenDocRouter 图片描述清理（0.6.5）
+## OpenDocRouter 图片描述与 UI 标签清理（0.6.7）
 
 部分 OpenDocRouter 解析配方会把头像、图片或图标生成 `[Figure: ...]`、`[图片：...]`、`[Icon]` 等 Markdown 占位符。这些不是图片中可见文字，插件在 OpenDocRouter 结果层移除明确的图片/图标描述后再交给 Bob；仍发送原图并保留 `layout=true` 的坐标。代码围栏内的同名字面文本不清理，成对 Markdown 粗体/删除线标记也只在普通 OCR 文本中去掉，避免把 OCR 结果误渲染为样式。
 
-0.6.6 兼容同一 Markdown 行返回多个布局元素的模型：只跳过已消费的重复行元素，不把其它有效布局框全部判为歧义。
+0.6.6 兼容同一 Markdown 行返回多个布局元素的模型：只跳过已消费的重复行元素，不把其它有效布局框全部判为歧义。0.6.7 继续清理普通 OCR 行中的 `<button>`、`<span>`、`<label>` 和链接包装；代码围栏与表格解析路径保持原样。
