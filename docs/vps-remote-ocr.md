@@ -140,7 +140,7 @@ curl -sS http://127.0.0.1:50000/healthz
 把仓库里的模板复制过去（你可以先看一眼再复制）：
 
 ```bash
-sudo cp ~/Open-LLM-OCR/server/systemd/ppocrv5-http.service /etc/systemd/system/ppocrv5-http.service
+sudo cp ~/Open-LLM-OCR/server/systemd/ppocrv5-http.service.txt /etc/systemd/system/ppocrv5-http.service
 ```
 
 如果你的安装目录不是 `~/Open-LLM-OCR`，就需要编辑 `ExecStart` / 模型路径为你的实际路径。
